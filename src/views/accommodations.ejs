@@ -1,0 +1,236 @@
+<%- include('partials/header', { title: 'Accommodations & Venues', pageCss: 'accommodations' }) %>
+
+<section class="accommodations-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container">
+    <h1 class="display-4 fw-bold mb-3">Accommodations & Venues</h1>
+    <p class="lead mb-4">Find comfortable stays and event spaces for NASCON 2025 (Islamabad)</p>
+    <% if (locals.user && locals.user.privileges && locals.user.privileges.Accommodations && locals.user.privileges.Accommodations.create) { %>
+      <a href="/accommodations/add" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus me-1"></i> Add New Accommodation
+      </a>
+    <% } %>
+  </div>
+</section>
+
+<section class="accommodations-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Available Accommodations</h2>
+    <div class="row g-4">
+      <% if (accommodations && accommodations.length > 0) { %>
+        <% accommodations.forEach(accommodation => { %>
+          <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm accommodation-card">
+              <% if (accommodation.PhotoURLs && accommodation.PhotoURLs.split(',').length > 0) { %>
+                <div id="carouselAcc<%= accommodation.AccommodationID %>" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                    <% accommodation.PhotoURLs.split(',').forEach((url, index) => { %>
+                      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                        <img src="<%= url %>" class="d-block w-100 accommodation-image" alt="<%= accommodation.Name %> - Image <%= index + 1 %>">
+                      </div>
+                    <% }) %>
+                  </div>
+                  <% if (accommodation.PhotoURLs.split(',').length > 1) { %>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselAcc<%= accommodation.AccommodationID %>" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselAcc<%= accommodation.AccommodationID %>" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  <% } %>
+                </div>
+              <% } else { %>
+                 <img src="/images/default-accommodation.jpg" class="card-img-top accommodation-image" alt="Default Accommodation Image">
+              <% } %>
+
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2"><%= accommodation.Name %></h5>
+                 <span class="badge bg-<%= accommodation.Availability === 'Available' ? 'success' : 'warning' %> text-dark mb-2 align-self-start"><%= accommodation.Availability %></span>
+
+                <p class="card-text small text-muted mb-2"><i class="fas fa-map-marker-alt me-1 text-primary"></i> <%= accommodation.Location %></p>
+                <p class="card-text small text-muted mb-2"><i class="fas fa-users me-1 text-primary"></i> Capacity: <%= accommodation.Capacity %></p>
+                <p class="card-text small text-muted mb-3"><i class="fas fa-money-bill-wave me-1 text-primary"></i> Budget: <%= accommodation.BudgetRange %></p>
+
+                <% if (accommodation.Description) { %>
+                  <p class="card-text small text-muted description-clamp flex-grow-1"><%= accommodation.Description %></p>
+                <% } %>
+
+                <% if (accommodation.Amenities) { %>
+                  <div class="mt-3">
+                      <strong class="small">Amenities:</strong>
+                      <p class="small text-muted"><%= accommodation.Amenities %></p>
+                  </div>
+                <% } %>
+
+                 <% if (accommodation.ContactInfo) { %>
+                  <div class="mt-3 pt-3 border-top border-secondary">
+                      <strong class="small">Contact:</strong>
+                      <p class="small text-muted"><%= accommodation.ContactInfo %></p>
+                  </div>
+                <% } %>
+
+                <% if (locals.user && locals.user.privileges && locals.user.privileges.Accommodations) { %>
+                    <div class="mt-auto pt-3 d-flex justify-content-end gap-2">
+                         <% if (user.privileges.Accommodations.update) { %>
+                            <a href="/accommodations/edit/<%= accommodation.AccommodationID %>" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                         <% } %>
+                         <% if (user.privileges.Accommodations.delete) { %>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('accommodation', '<%= accommodation.AccommodationID %>', '<%= accommodation.Name %>')">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                         <% } %>
+                    </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-12">
+          <div class="alert alert-secondary text-center" role="alert">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <p class="mb-0">No accommodations currently available.</p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="venues-section py-5" style="background-color: var(--bs-light-bg);">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Event Venues</h2>
+    <div class="row g-4">
+       <% if (venues && venues.length > 0) { %>
+        <% venues.forEach(venue => { %>
+          <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm venue-card">
+               <div class="card-header d-flex justify-content-between align-items-center">
+                   <span class="fw-bold"><%= venue.VenueType %></span>
+                   <span class="badge bg-<%= venue.Status === 'Available' ? 'success' : 'warning' %> text-dark"><%= venue.Status %></span>
+               </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2"><%= venue.Name %></h5>
+                <p class="card-text small text-muted mb-2"><i class="fas fa-map-marker-alt me-1 text-primary"></i> <%= venue.Address %></p>
+                 <% if (venue.Capacity) { %>
+                    <p class="card-text small text-muted mb-3"><i class="fas fa-users me-1 text-primary"></i> Capacity: <%= venue.Capacity %></p>
+                 <% } %>
+
+                 <% if (venue.Description) { %>
+                    <p class="card-text small text-muted description-clamp flex-grow-1"><%= venue.Description %></p>
+                 <% } %>
+
+                 <% if (venue.Facilities) { %>
+                  <div class="mt-3">
+                      <strong class="small">Facilities:</strong>
+                      <p class="small text-muted"><%= venue.Facilities %></p>
+                  </div>
+                <% } %>
+
+                 <% if (venue.ContactPerson || venue.ContactEmail || venue.ContactPhone) { %>
+                    <div class="mt-3 pt-3 border-top border-secondary">
+                        <strong class="small">Contact:</strong>
+                        <% if (venue.ContactPerson) { %><p class="small text-muted mb-1"><i class="fas fa-user me-1 text-primary"></i> <%= venue.ContactPerson %></p><% } %>
+                        <% if (venue.ContactEmail) { %><p class="small text-muted mb-1"><i class="fas fa-envelope me-1 text-primary"></i> <a href="mailto:<%= venue.ContactEmail %>" class="text-muted footer-link"><%= venue.ContactEmail %></a></p><% } %>
+                        <% if (venue.ContactPhone) { %><p class="small text-muted mb-0"><i class="fas fa-phone me-1 text-primary"></i> <a href="tel:<%= venue.ContactPhone %>" class="text-muted footer-link"><%= venue.ContactPhone %></a></p><% } %>
+                    </div>
+                 <% } %>
+
+                 <% if (locals.user && locals.user.privileges && locals.user.privileges.Venues) { %>
+                    <div class="mt-auto pt-3 d-flex justify-content-end gap-2">
+                         <% if (user.privileges.Venues.update) { %>
+                            <a href="/venues/edit/<%= venue.VenueID %>" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                         <% } %>
+                         <% if (user.privileges.Venues.delete) { %>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('venue', '<%= venue.VenueID %>', '<%= venue.Name %>')">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                         <% } %>
+                    </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+       <% } else { %>
+         <div class="col-12">
+           <div class="alert alert-secondary text-center" role="alert">
+             <i class="fas fa-info-circle fa-2x mb-3"></i>
+             <p class="mb-0">No venues currently listed.</p>
+           </div>
+         </div>
+       <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+    // Optional: Initialize carousels if needed, though data-bs-ride should handle it
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const carousels = document.querySelectorAll('.carousel');
+    //     carousels.forEach(carousel => new bootstrap.Carousel(carousel));
+    // });
+
+     // Confirm Deletion Function
+    async function confirmDelete(type, id, name) {
+        if (confirm(`Are you sure you want to delete the ${type} "${name}"? This action cannot be undone.`)) {
+            try {
+                const url = type === 'accommodation' ? `/accommodations/${id}` : `/venues/${id}`;
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // Add CSRF token if needed
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) { // Adjust based on your API response
+                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully.`);
+                    window.location.reload();
+                } else {
+                    alert(`Failed to delete ${type}: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error(`Error deleting ${type}:`, error);
+                alert(`An error occurred while trying to delete the ${type}.`);
+            }
+        }
+    }
+</script>
+
+<style>
+    .accommodations-hero {
+        min-height: 50vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/accommodations-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+    .accommodation-image {
+        height: 200px;
+        object-fit: cover;
+    }
+    .accommodation-card, .venue-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .accommodation-card:hover, .venue-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+    .description-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 4.5em; /* Adjust based on line-height */
+  }
+</style>

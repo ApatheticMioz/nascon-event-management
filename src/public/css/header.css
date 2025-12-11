@@ -1,0 +1,197 @@
+/* Header Styles */
+.main-nav {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.main-nav .container, .nav-container {
+    max-width: none;
+    margin: 0;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Logo Styles */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.05);
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.nav-links a.active {
+    color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.15);
+}
+
+/* Auth Buttons */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-login,
+.btn-register {
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-login {
+    color: var(--primary-color);
+    background: transparent;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-login:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.btn-register {
+    color: white;
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-register:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* Mobile Menu */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-color);
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .main-nav {
+        background: rgba(18, 18, 18, 0.95);
+    }
+
+    .nav-links a {
+        color: #fff;
+    }
+
+    .btn-login {
+        color: #fff;
+        border-color: #fff;
+    }
+
+    .btn-login:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-color);
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-actions {
+        margin-left: 0;
+    }
+}
+
+/* Scroll Effect */
+.main-nav.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .main-nav.scrolled {
+        background: rgba(18, 18, 18, 0.98);
+    }
+}
+
+:root {
+    --primary-color: #FFD700;
+    --primary-dark: #C9B037;
+    --secondary-color: #181818;
+    --accent-color: #FFD700;
+    --text-color: #fff;
+    --text-secondary: #C9B037;
+    --bg-color: #111;
+    --card-bg: #181818;
+    --border-color: #FFD700;
+    --input-bg: #222;
+    --error-color: #e74c3c;
+} 

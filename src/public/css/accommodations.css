@@ -1,0 +1,83 @@
+/* public/css/accommodations.css */
+
+/* Keep specific styles if needed, remove Bootstrap overlaps */
+
+.accommodations-hero {
+    min-height: 50vh;
+    background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/accommodations-hero.jpg') center/cover no-repeat;
+    margin-top: -70px; /* Offset navbar height */
+    padding-top: 70px; /* Ensure content is below navbar */
+}
+
+.accommodations-hero h1 {
+    color: var(--bs-primary); /* Use theme color */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.accommodations-section,
+.venues-section {
+    padding: 3rem 0; /* Adjusted padding */
+}
+
+.accommodations-section h2,
+.venues-section h2 {
+    color: var(--bs-primary); /* Use theme color */
+}
+
+.accommodation-card,
+.venue-card {
+    /* Keep hover effects if desired */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--bs-border-color); /* Use theme border */
+    background-color: var(--card-bg); /* Use theme card background */
+}
+
+.accommodation-card:hover,
+.venue-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important; /* Darker shadow on hover */
+}
+
+.accommodation-image {
+    height: 200px; /* Maintain image height */
+    object-fit: cover;
+}
+
+.card-title {
+     color: var(--bs-body-color); /* Ensure title is visible */
+}
+
+.card-subtitle, .card-text {
+    color: rgba(255, 255, 255, 0.7); /* Lighter text for details */
+}
+
+.badge.bg-success {
+    background-color: #198754 !important; /* Bootstrap success */
+    color: white !important;
+}
+.badge.bg-warning {
+    background-color: #ffc107 !important; /* Bootstrap warning */
+    color: black !important;
+}
+.badge.bg-danger {
+     background-color: #dc3545 !important; /* Bootstrap danger */
+     color: white !important;
+}
+
+.description-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit description lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 4.5em; /* Adjust based on line-height */
+}
+
+/* Ensure icons use theme color */
+.accommodation-card i, .venue-card i {
+    color: var(--bs-primary);
+}
+
+/* Remove general container padding, grid styles if using Bootstrap rows/cols */
+/* Remove card base styles if using Bootstrap cards */
+/* Remove button base styles */

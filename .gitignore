@@ -1,0 +1,28 @@
+# Node.js dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.*.local
+.env.local
+.env.test
+
+# Logs and diagnostics
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+logs/
+
+# Build and coverage outputs
+coverage/
+dist/
+build/
+.tmp/
+.temp/
+
+# Editor and system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

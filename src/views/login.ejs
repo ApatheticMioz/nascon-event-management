@@ -1,0 +1,89 @@
+<%- include('partials/header', { title: 'Login' }) %>
+
+<div class="container login-page-container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="col-md-6 col-lg-5 col-xl-4">
+    <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <i class="fas fa-user-circle fa-3x text-primary mb-3"></i>
+          <h1 class="h3 mb-3 fw-normal">Welcome Back</h1>
+          <p class="text-muted">Sign in to your NASCON account</p>
+        </div>
+
+        <% if (locals.url && new URLSearchParams(url).get('registered') === 'true') { %>
+          <div class="alert alert-success mb-4 small" role="alert">
+            <i class="fas fa-check-circle me-1"></i> Registration successful! Please log in.
+          </div>
+        <% } %>
+
+        <div class="alert alert-danger d-none mb-4 small" id="errorAlert" role="alert"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+            <label for="email"><i class="fas fa-envelope me-1"></i> Email address</label>
+            <div class="invalid-feedback small">Please enter a valid email address.</div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            <label for="password"><i class="fas fa-lock me-1"></i> Password</label>
+            <div class="invalid-feedback small">Please enter your password.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+              <label class="form-check-label small text-muted" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+            <a href="/forgot-password" class="small text-decoration-none">Forgot Password?</a>
+          </div>
+
+          <button class="w-100 btn btn-lg btn-primary" type="submit">
+            <i class="fas fa-sign-in-alt me-1"></i> Sign In
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <p class="small text-muted">Don't have an account? <a href="/register" class="text-decoration-none fw-medium">Create Account</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/login.js"></script>
+
+<style>
+  .login-page-container {
+    background: linear-gradient(135deg, rgba(var(--bs-secondary-rgb), 0.9), rgba(var(--bs-dark-rgb), 0.9)), url('/images/login-bg.jpg') center/cover no-repeat;
+    /* Add a fallback background color */
+    background-color: var(--bs-dark);
+  }
+  .card {
+     background-color: rgba(var(--bs-secondary-rgb), 0.95); /* Slightly transparent card */
+     backdrop-filter: blur(5px);
+  }
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(var(--bs-primary-rgb), 0.3);
+    color: var(--bs-body-color);
+  }
+  .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--bs-primary);
+    color: var(--bs-body-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  }
+  .form-floating > label {
+      color: rgba(255, 255, 255, 0.7);
+  }
+  .form-floating > .form-control:focus ~ label,
+  .form-floating > .form-control:not(:placeholder-shown) ~ label {
+      color: var(--bs-primary);
+  }
+</style>
+
+<%- include('partials/footer') %>

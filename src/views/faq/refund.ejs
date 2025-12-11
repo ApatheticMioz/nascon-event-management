@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/faq.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="faq-page">
+        <div class="container">
+            <div class="faq-content">
+                <h1>Refund Policy</h1>
+                
+                <section class="faq-section">
+                    <h2>Refund Eligibility</h2>
+                    <div class="refund-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time Before Event</th>
+                                    <th>Refund Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>30+ days</td>
+                                    <td>100% refund</td>
+                                </tr>
+                                <tr>
+                                    <td>15-29 days</td>
+                                    <td>75% refund</td>
+                                </tr>
+                                <tr>
+                                    <td>7-14 days</td>
+                                    <td>50% refund</td>
+                                </tr>
+                                <tr>
+                                    <td>Less than 7 days</td>
+                                    <td>No refund</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Refund Process</h2>
+                    <ol>
+                        <li>Submit a refund request through your account dashboard</li>
+                        <li>Provide reason for cancellation</li>
+                        <li>Wait for approval (usually within 3-5 business days)</li>
+                        <li>Receive refund through original payment method</li>
+                    </ol>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Important Notes</h2>
+                    <ul>
+                        <li>Processing fees are non-refundable</li>
+                        <li>Refunds may take 7-10 business days to process</li>
+                        <li>Event transfers to another person are allowed with prior approval</li>
+                        <li>Force majeure cases will be handled on a case-by-case basis</li>
+                    </ul>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Need Help?</h2>
+                    <p>For any queries regarding refunds, contact our finance team:</p>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> refunds@nascon.com</li>
+                        <li><i class="fas fa-phone"></i> +92-51-1234567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> FAST-NUCES, H-11/4, A-K Brohi Road, Islamabad</li>
+                        <li><i class="fas fa-clock"></i> Monday - Friday: 9:00 AM - 5:00 PM</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html> 

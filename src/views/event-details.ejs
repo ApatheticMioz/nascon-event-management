@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .event-details-page {
+            padding: 40px 0;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .event-header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--bg-color));
+            color: var(--primary-color);
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .event-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .meta-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .event-content {
+            margin-bottom: 40px;
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .description {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .rules-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .rules-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .participants-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .participants-table th,
+        .participants-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .participants-table th {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .participants-table tr:hover {
+            background: var(--secondary-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-draft { background: #e9ecef; color: #495057; }
+        .status-published { background: #d4edda; color: #155724; }
+        .status-ongoing { background: #cce5ff; color: #004085; }
+        .status-completed { background: #d1ecf1; color: #0c5460; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        .payment-pending { background: #fff3cd; color: #856404; }
+        .payment-paid { background: #d4edda; color: #155724; }
+        .payment-failed { background: #f8d7da; color: #721c24; }
+
+        @media (max-width: 768px) {
+            .event-header {
+                padding: 40px 0;
+            }
+
+            .event-title {
+                font-size: 2rem;
+            }
+
+            .event-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .participants-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="event-details-page">
+        <div class="event-header">
+            <div class="container">
+                <h1 class="event-title"><%= event.Name %></h1>
+                <div class="event-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <%= new Date(event.Date).toLocaleDateString() %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <%= event.Time %>
+                    </div>
+                    <% if (event.VenueName) { %>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <%= event.VenueName %>
+                        </div>
+                    <% } %>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <%= event.EventType %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <%= event.CategoryName %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-money-bill"></i>
+                        <%= event.Reg_Fee ? `Rs. ${event.Reg_Fee}` : 'Free' %>
+                    </div>
+                </div>
+
+                <div class="event-actions">
+                    <% if (user && user.privileges && user.privileges.Events) { %>
+                        <% if (user.privileges.Events.update) { %>
+                            <a href="/events/edit/<%= event.EventID %>" class="btn btn-warning">Edit Event</a>
+                        <% } %>
+                        <% if (user.privileges.Events.delete) { %>
+                            <form action="/events/delete/<%= event.EventID %>" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Delete Event</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (user && user.privileges && user.privileges.Judges && user.privileges.Judges.assign) { %>
+                        <a href="/judges/assign/<%= event.EventID %>" class="btn btn-info">Add Judge</a>
+                    <% } %>
+                    <% if (user && user.privileges && user.privileges.Events && user.privileges.Events.register) { %>
+                        <a href="/registration?eventId=<%= event.EventID %>" class="btn btn-success">Register</a>
+                    <% } %>
+                    <% if (user && user.privileges && user.privileges.Teams && user.privileges.Teams.create && event.EventType === 'Team') { %>
+                        <a href="/teams/new?eventId=<%= event.EventID %>" class="btn btn-primary">Create Team</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="event-content">
+                <div class="content-section">
+                    <h2 class="section-title">Event Details</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Status</span>
+                            <span class="status-badge status-<%= event.Status.toLowerCase() %>">
+                                <%= event.Status %>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Organizer</span>
+                            <span class="info-value"><%= event.OrganizerName %></span>
+                        </div>
+                        <% if (event.SponsorName) { %>
+                            <div class="info-item">
+                                <span class="info-label">Sponsor</span>
+                                <span class="info-value"><%= event.SponsorName %></span>
+                            </div>
+                        <% } %>
+                        <% if (event.Max_Participants) { %>
+                            <div class="info-item">
+                                <span class="info-label">Maximum Participants</span>
+                                <span class="info-value"><%= event.Max_Participants %></span>
+                            </div>
+                        <% } %>
+                        <% if (event.RegisteredParticipants) { %>
+                            <div class="info-item">
+                                <span class="info-label">Registered Participants</span>
+                                <span class="info-value"><%= event.RegisteredParticipants %></span>
+                            </div>
+                        <% } %>
+                        <% if (event.RegistrationDeadline) { %>
+                            <div class="info-item">
+                                <span class="info-label">Registration Deadline</span>
+                                <span class="info-value">
+                                    <%= new Date(event.RegistrationDeadline).toLocaleString() %>
+                                </span>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <h3 class="section-title">Description</h3>
+                    <div class="description">
+                        <%= event.EventDescription %>
+                    </div>
+
+                    <% if (event.Rules) { %>
+                        <h3 class="section-title">Rules & Guidelines</h3>
+                        <ul class="rules-list">
+                            <% event.Rules.split('\n').forEach(rule => { %>
+                                <% if (rule.trim()) { %>
+                                    <li><%= rule.trim() %></li>
+                                <% } %>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </div>
+
+                <% if (user && (user.privileges?.events?.view_participants || user.id === event.OrganizerID)) { %>
+                    <div class="content-section">
+                        <h2 class="section-title">Registered Participants</h2>
+                        <% if (participants && participants.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="participants-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Registration Date</th>
+                                            <th>Team Name</th>
+                                            <th>Payment Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% participants.forEach(participant => { %>
+                                            <tr>
+                                                <td><%= participant.Name %></td>
+                                                <td><%= participant.Email %></td>
+                                                <td><%= new Date(participant.RegistrationDate).toLocaleString() %></td>
+                                                <td><%= participant.TeamName || '-' %></td>
+                                                <td>
+                                                    <span class="status-badge payment-<%= participant.PaymentStatus.toLowerCase() %>">
+                                                        <%= participant.PaymentStatus %>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <p>No participants registered yet.</p>
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <div class="info-section">
+                    <h2>Assigned Judges</h2>
+                    <% if (judges && judges.length > 0) { %>
+                        <div class="judges-list">
+                            <% judges.forEach(judge => { %>
+                                <div class="judge-item">
+                                    <div class="judge-info">
+                                        <h3><%= judge.Name %></h3>
+                                        <p><i class="fas fa-graduation-cap"></i> <%= judge.Specialization %></p>
+                                        <% if (judge.AssignedAt) { %>
+                                            <p><i class="fas fa-clock"></i> Assigned: <%= new Date(judge.AssignedAt).toLocaleDateString() %></p>
+                                        <% } %>
+                                    </div>
+                                    <% if (user && user.privileges?.judges?.assign) { %>
+                                        <button onclick="removeJudge('<%= judge.JudgeID %>')" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times"></i> Remove
+                                        </button>
+                                    <% } %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted">No judges assigned to this event yet.</p>
+                    <% } %>
+
+                    <% if (user && user.privileges?.judges?.assign) { %>
+                        <form method="POST" action="/judges/assign-to-event" style="margin-top: 1.5rem;">
+                            <input type="hidden" name="eventId" value="<%= event.EventID %>">
+                            <label for="judgeId">Assign Judge:</label>
+                            <select name="judgeId" id="judgeId" required>
+                                <option value="">Select Judge</option>
+                                <% if (availableJudges && availableJudges.length > 0) { %>
+                                    <% availableJudges.forEach(judge => { %>
+                                        <option value="<%= judge.JudgeID %>"><%= judge.Name %> (<%= judge.Specialization %>)</option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 0.5rem;">Assign</button>
+                        </form>
+                    <% } %>
+                </div>
+
+                <!-- Scores & Rankings Section -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Scores & Rankings</h3>
+                    </div>
+                    <div class="card-body">
+                        <% if (user && user.role === 'judge') { %>
+                            <div class="mb-4">
+                                <a href="/scores/event/<%= event.EventID %>/judge" class="btn btn-primary">
+                                    <i class="fas fa-star"></i> Enter Scores
+                                </a>
+                            </div>
+                        <% } %>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Participant</th>
+                                        <th>Total Score</th>
+                                        <th>Average Score</th>
+                                        <th>Judges</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% rankings.forEach((rank, index) => { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= rank.ParticipantName %></td>
+                                            <td><%= rank.TotalScore ? Number(rank.TotalScore).toFixed(1) : '0.0' %></td>
+                                            <td><%= rank.AverageScore ? Number(rank.AverageScore).toFixed(1) : '0.0' %></td>
+                                            <td><%= rank.JudgeCount %></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                        onclick="showScoreDetails('<%= rank.ParticipantUserID %>')">
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Assign Judge Modal -->
+    <div class="modal fade" id="assignJudgeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Judge</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="judgeId">Select Judge</label>
+                        <select class="form-select" id="judgeId" required>
+                            <option value="">Select a judge...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="assignJudge()">Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Details Modal -->
+    <div class="modal fade" id="scoreDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Score Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Criteria</th>
+                                    <th>Score</th>
+                                    <th>Judge</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreDetailsBody">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+    async function loadAvailableJudges() {
+        try {
+            const response = await fetch('/judges/available-for-event/<%= event.EventID %>');
+            const judges = await response.json();
+            const judgeSelect = document.getElementById('judgeId');
+            judgeSelect.innerHTML = '<option value="">Select a judge...</option>';
+            
+            judges.forEach(judge => {
+                const option = document.createElement('option');
+                option.value = judge.JudgeID;
+                option.textContent = `${judge.Name} (${judge.Specialization})`;
+                judgeSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading available judges:', error);
+            alert('Failed to load available judges');
+        }
+    }
+
+    function showAssignJudgeModal() {
+        loadAvailableJudges();
+        const modal = new bootstrap.Modal(document.getElementById('assignJudgeModal'));
+        modal.show();
+    }
+
+    async function assignJudge() {
+        const judgeId = document.getElementById('judgeId').value;
+        if (!judgeId) {
+            alert('Please select a judge');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/judges/${judgeId}/events/<%= event.EventID %>`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to assign judge');
+            }
+
+            window.location.reload();
+        } catch (error) {
+            console.error('Error assigning judge:', error);
+            alert(error.message || 'Failed to assign judge');
+        }
+    }
+
+    async function removeJudge(judgeId) {
+        if (!confirm('Are you sure you want to remove this judge from the event?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/judges/${judgeId}/events/<%= event.EventID %>`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to remove judge');
+            }
+
+            window.location.reload();
+        } catch (error) {
+            console.error('Error removing judge:', error);
+            alert(error.message || 'Failed to remove judge');
+        }
+    }
+
+    async function showScoreDetails(participantId) {
+        try {
+            const response = await fetch(`/scores/participant/${participantId}`);
+            const scores = await response.json();
+            
+            const tbody = document.getElementById('scoreDetailsBody');
+            tbody.innerHTML = scores.map(score => `
+                <tr>
+                    <td>${score.Criteria}</td>
+                    <td>${score.Value.toFixed(1)}</td>
+                    <td>${score.JudgeName} (${score.JudgeSpecialization})</td>
+                    <td>${new Date(score.CreatedAt).toLocaleString()}</td>
+                </tr>
+            `).join('');
+            
+            new bootstrap.Modal(document.getElementById('scoreDetailsModal')).show();
+        } catch (error) {
+            console.error('Error fetching score details:', error);
+            alert('Failed to load score details');
+        }
+    }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,227 @@
+<%- include('partials/header', { title: 'Competitions', pageCss: 'competitions' }) %>
+
+<section class="competitions-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container hero-content">
+    <h1 class="display-4 fw-bold mb-3">NASCON 2025 Competitions</h1>
+    <p class="lead mb-0">Showcase your skills and compete with the best in Islamabad</p>
+  </div>
+</section>
+
+<section class="overview py-5">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold text-primary">Competition Categories</h2>
+    <div class="row g-4 justify-content-center">
+      <% if (categories && categories.length > 0) { %>
+        <% categories.forEach(category => { %>
+          <div class="col-lg-3 col-md-6">
+            <div class="card category-card text-center h-100 shadow-sm border-0 p-3">
+              <div class="card-body">
+                <i class="fas fa-trophy fa-3x text-primary mb-3"></i>
+                <h5 class="card-title fw-semibold mb-2"><%= category.CategoryName %></h5>
+                <p class="card-text small text-muted"><%= category.Description %></p>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+         <p class="text-center text-muted">No categories defined yet.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="competitions py-5" style="background-color: var(--bs-light-bg);">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <h2 class="fw-bold mb-0">Explore Competitions</h2>
+        <div class="filters mt-3 mt-md-0">
+          <select id="categoryFilter" class="form-select form-select-sm" style="max-width: 250px;">
+            <option value="">Filter by Category</option>
+            <% if (categories && categories.length > 0) { %>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category.CategoryName %>"><%= category.CategoryName %></option>
+                <% }); %>
+            <% } %>
+          </select>
+        </div>
+    </div>
+
+    <div class="row g-4" id="competitionsGrid">
+      <% if (competitions && competitions.length > 0) { %>
+        <% competitions.forEach(competition => { %>
+          <%
+            let deadline = new Date(competition.RegistrationDeadline);
+            let isDeadlineNear = deadline - new Date() < 7 * 24 * 60 * 60 * 1000 && deadline > new Date();
+            let deadlineFormatted = deadline.toLocaleDateString('en-CA'); // YYYY-MM-DD
+          %>
+          <div class="col-lg-4 col-md-6 competition-card-wrapper" data-category="<%= competition.CategoryName %>">
+            <div class="card h-100 shadow-sm competition-card">
+               <div class="card-header d-flex justify-content-between align-items-center">
+                   <span class="badge bg-primary"><%= competition.CategoryName %></span>
+                   <% if (isDeadlineNear) { %>
+                     <span class="badge bg-warning text-dark small">Registration Closing Soon</span>
+                   <% } %>
+               </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title fw-semibold mb-2"><%= competition.Name %></h5>
+                <p class="card-text small text-muted description-clamp flex-grow-1"><%= competition.Description %></p>
+
+                <div class="mt-3 small text-muted">
+                    <% if (competition.Rules) { %>
+                        <p class="mb-1"><i class="fas fa-scroll me-1 text-primary"></i> <strong>Rules:</strong> <%= competition.Rules.substring(0, 50) %>...</p>
+                    <% } %>
+                    <p class="mb-1"><i class="fas fa-users me-1 text-primary"></i> <strong>Team Size:</strong> <%= competition.Max_Participants || 'N/A' %></p>
+                    <p class="mb-1"><i class="fas fa-dollar-sign me-1 text-primary"></i> <strong>Fee:</strong> <%= competition.Reg_Fee ? `Rs. ${parseFloat(competition.Reg_Fee).toFixed(2)}` : 'Free' %></p>
+                    <p class="mb-0"><i class="fas fa-hourglass-end me-1 text-primary"></i> <strong>Deadline:</strong> <%= deadlineFormatted %></p>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent border-top-0 text-center">
+                <% if (locals.user) { %>
+                  <button class="btn btn-primary w-100 register-btn" data-event-id="<%= competition.EventID %>" data-event-name="<%= competition.Name %>">
+                    <i class="fas fa-edit me-1"></i> Register Now
+                  </button>
+                <% } else { %>
+                  <a href="/login?redirect=/competitions" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-sign-in-alt me-1"></i> Login to Register
+                  </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+       <% } else { %>
+         <div class="col-12">
+           <div class="alert alert-secondary text-center" role="alert">
+             <i class="fas fa-info-circle fa-2x mb-3"></i>
+             <p class="mb-0">No competitions available at the moment.</p>
+           </div>
+         </div>
+       <% } %>
+    </div>
+     <div id="noResultsCompMessage" class="col-12 text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No competitions match your filter criteria.</p>
+    </div>
+  </div>
+</section>
+
+<div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registrationModalLabel">Register for Competition</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>You are about to register for: <strong id="modalEventName"></strong></p>
+        <p class="text-muted small">Note: This is a placeholder modal. Implement your actual registration logic.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmRegistrationBtn">Confirm Registration</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/js/competitions.js"></script>
+<script>
+    // Modal handling logic (Example)
+    const registrationModalElement = document.getElementById('registrationModal');
+    const registrationModal = new bootstrap.Modal(registrationModalElement);
+    const modalEventName = document.getElementById('modalEventName');
+    let currentEventId = null;
+
+    document.querySelectorAll('.register-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            currentEventId = button.dataset.eventId;
+            modalEventName.textContent = button.dataset.eventName;
+            registrationModal.show();
+        });
+    });
+
+    document.getElementById('confirmRegistrationBtn').addEventListener('click', async () => {
+        // --- Implement your actual registration API call here ---
+        console.log(`Registering for event ID: ${currentEventId}`);
+        // Example:
+        // try {
+        //   const response = await fetch('/api/register-event', { method: 'POST', body: JSON.stringify({ eventId: currentEventId }), headers: {'Content-Type': 'application/json'} });
+        //   if (response.ok) { alert('Registration successful!'); registrationModal.hide(); }
+        //   else { alert('Registration failed.'); }
+        // } catch (error) { alert('Error during registration.'); }
+        alert('Placeholder: Registration confirmed for event ID ' + currentEventId);
+        registrationModal.hide();
+    });
+
+    // Filter functionality
+    function filterCompetitions() {
+        const category = document.getElementById('categoryFilter').value;
+        const cards = document.querySelectorAll('.competition-card-wrapper');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardCategory = card.dataset.category || '';
+            const isVisible = !category || cardCategory === category;
+            card.style.display = isVisible ? '' : 'none';
+             if (isVisible) visibleCount++;
+        });
+
+         // Show/hide no results message
+        const noResultsMessage = document.getElementById('noResultsCompMessage');
+        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    document.getElementById('categoryFilter').addEventListener('change', filterCompetitions);
+    document.addEventListener('DOMContentLoaded', filterCompetitions); // Initial filter
+</script>
+
+<style>
+    .competitions-hero {
+        min-height: 50vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/competitions-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: var(--card-bg);
+        border: 1px solid var(--bs-border-color);
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+    .competition-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: var(--card-bg);
+        border: 1px solid var(--bs-border-color);
+    }
+    .competition-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+    .description-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 4.5em; /* Adjust */
+    }
+    .modal-content { /* Style modal for dark theme */
+        background-color: var(--card-bg);
+        color: var(--bs-body-color);
+        border: 1px solid var(--bs-border-color);
+    }
+    .modal-header {
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+     .modal-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%); /* Make close button visible */
+    }
+    .modal-footer {
+         border-top: 1px solid var(--bs-border-color);
+    }
+</style>

@@ -1,0 +1,79 @@
+/* public/css/style.css */
+/* Keep specific layout styles or unique component styles here */
+/* Remove base resets, font imports, and styles now handled by Bootstrap and custom.css */
+
+/* Example: Keeping specific layout padding if necessary */
+.main-content {
+    padding: 2rem 0; /* Example adjustment */
+}
+
+/* Example: Keeping a specific section style */
+.featured-events {
+    padding: 3rem 1rem; /* Adjusted padding */
+    /* Keep unique background or structure if needed */
+}
+
+.events-grid {
+    /* Keep grid styles if they are specific and not default Bootstrap */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* Keep styles for specific cards if they differ significantly from Bootstrap cards */
+.event-card {
+    /* Example: Unique border or shadow */
+    /* border-left: 5px solid var(--bs-primary); */
+    /* Remove background/color if handled by Bootstrap/custom.css */
+}
+
+/* Footer Styles - Keep only if highly customized beyond Bootstrap utilities */
+/* .main-footer { ... } */
+/* .footer-content { ... } */
+/* .footer-section { ... } */
+
+/* --- Remove redundant styles --- */
+/* Remove body font-family, color, background-color (handled by custom.css) */
+/* Remove button base styles (handled by Bootstrap/custom.css) */
+/* Remove link base styles (handled by Bootstrap/custom.css) */
+/* Remove container max-width if using standard Bootstrap containers */
+/* Remove general resets (*) */
+
+/* --- Review and keep unique component styles --- */
+/* e.g., specific styles for .hero, .about, .sponsors-grid, etc. */
+/* Ensure they don't conflict with Bootstrap classes */
+
+.hero {
+    /* Example: Keep unique height or background properties if needed */
+    min-height: 60vh; /* Adjusted height */
+    /* background: ... */ /* Keep if specific */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.cta-buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.about, .sponsors {
+    padding: 3rem 1rem; /* Adjusted padding */
+}
+
+.about h2, .sponsors h2, .featured-events h2 {
+    text-align: center;
+    margin-bottom: 2rem; /* Adjusted margin */
+    color: var(--bs-primary); /* Use theme color */
+}
+
+/* Add any other specific styles that need to be preserved */

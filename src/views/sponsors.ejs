@@ -1,0 +1,258 @@
+<%- include('partials/header', { title: 'Sponsors', pageCss: 'sponsors' }) %>
+
+<section class="sponsors-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container hero-content">
+    <h1 class="display-4 fw-bold mb-3">Our Valued Sponsors</h1>
+    <p class="lead mb-0">Meet the organizations supporting NASCON 2025 (Islamabad)</p>
+  </div>
+</section>
+
+<section class="sponsors-grid-section py-5">
+  <div class="container">
+    <div class="sponsors-filters card shadow-sm mb-4">
+       <div class="card-body">
+         <div class="row g-3">
+            <div class="col-md-4">
+                <label for="levelFilter" class="form-label small text-muted">Sponsorship Level</label>
+                <select class="form-select" id="levelFilter">
+                    <option value="">All Levels</option>
+                    <option value="platinum">Platinum</option>
+                    <option value="gold">Gold</option>
+                    <option value="silver">Silver</option>
+                    <option value="bronze">Bronze</option>
+                    </select>
+            </div>
+             <div class="col-md-4">
+                <label for="categoryFilterSponsor" class="form-label small text-muted">Industry/Category</label>
+                <select class="form-select" id="categoryFilterSponsor">
+                    <option value="">All Categories</option>
+                     <% let sponsorCategories = [...new Set(sponsors.map(s => s.Category).filter(Boolean))]; %>
+                     <% sponsorCategories.sort().forEach(category => { %>
+                        <option value="<%= category %>"><%= category %></option>
+                     <% }); %>
+                </select>
+            </div>
+             <div class="col-md-4 d-flex align-items-end">
+                 <% if (locals.user && locals.user.privileges && locals.user.privileges.Sponsors && locals.user.privileges.Sponsors.create) { %>
+                    <a href="/sponsors/add" class="btn btn-primary w-100">
+                        <i class="fas fa-plus me-1"></i> Add Sponsor
+                    </a>
+                 <% } %>
+             </div>
+         </div>
+       </div>
+    </div>
+
+    <div class="row g-4" id="sponsorsGrid">
+      <% if (sponsors && sponsors.length > 0) { %>
+        <% sponsors.forEach(sponsor => { %>
+          <div class="col-lg-3 col-md-4 col-sm-6 sponsor-card-wrapper"
+               data-level="<%= sponsor.SponsorshipLevel ? sponsor.SponsorshipLevel.toLowerCase() : '' %>"
+               data-category="<%= sponsor.Category || '' %>"
+               data-status="<%= sponsor.Status || 'pending' %>">
+            <div class="card h-100 shadow-sm sponsor-card text-center">
+              <div class="sponsor-logo-container p-3">
+                 <img src="<%= sponsor.LogoURL || '/images/default-sponsor.png' %>"
+                     alt="<%= sponsor.Name %> Logo"
+                     class="sponsor-logo img-fluid">
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title fw-semibold mb-1"><%= sponsor.Name %></h5>
+                <% if (sponsor.SponsorshipLevel) { %>
+                    <span class="badge level-<%= sponsor.SponsorshipLevel.toLowerCase() %> align-self-center mb-2">
+                        <%= sponsor.SponsorshipLevel.charAt(0).toUpperCase() + sponsor.SponsorshipLevel.slice(1) %>
+                    </span>
+                <% } %>
+                 <% if (sponsor.Category) { %>
+                    <p class="card-text small text-muted mb-2"><i class="fas fa-tag me-1"></i> <%= sponsor.Category %></p>
+                 <% } %>
+                <div class="mt-auto d-flex justify-content-center gap-2 pt-2">
+                     <% if (sponsor.Website) { %>
+                        <a href="<%= sponsor.Website %>" target="_blank" class="btn btn-sm btn-outline-primary" title="Visit Website">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                     <% } %>
+                     <% if (locals.user && locals.user.privileges && locals.user.privileges.Sponsors) { %>
+                        <% if (user.privileges.Sponsors.update) { %>
+                            <a href="/sponsors/edit/<%= sponsor.SponsorID %>" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        <% } %>
+                        <% if (user.privileges.Sponsors.delete) { %>
+                             <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('sponsor', '<%= sponsor.SponsorID %>', '<%= sponsor.Name %>')" title="Delete">
+                                 <i class="fas fa-trash"></i>
+                             </button>
+                        <% } %>
+                     <% } %>
+                </div>
+              </div>
+               <div class="card-footer text-muted small">
+                 Status: <%= sponsor.Status ? sponsor.Status.charAt(0).toUpperCase() + sponsor.Status.slice(1) : 'Pending' %>
+               </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-12">
+          <div class="alert alert-secondary text-center" role="alert">
+            <i class="fas fa-handshake fa-2x mb-3"></i>
+            <p class="mb-0">No sponsors to display currently.</p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+     <div id="noSponsorsMessage" class="col-12 text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No sponsors match your filter criteria.</p>
+    </div>
+  </div>
+</section>
+
+<section class="become-sponsor py-5" style="background-color: var(--bs-light-bg);">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Become a Sponsor</h2>
+        <p class="lead text-muted mb-4 mx-auto" style="max-width: 700px;">Support NASCON 2025 and gain visibility within the tech community. Explore our sponsorship opportunities.</p>
+        <a href="/contact?subject=Sponsorship Inquiry" class="btn btn-primary btn-lg">Inquire About Sponsorship</a>
+    </div>
+</section>
+
+
+<%- include('partials/footer') %>
+
+<script>
+    function filterSponsors() {
+        const level = document.getElementById('levelFilter').value;
+        const category = document.getElementById('categoryFilterSponsor').value;
+        // const status = document.getElementById('statusFilter').value; // Add status filter if needed
+        const cards = document.querySelectorAll('.sponsor-card-wrapper');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardLevel = card.dataset.level || '';
+            const cardCategory = card.dataset.category || '';
+            // const cardStatus = card.dataset.status || '';
+
+            const matchesLevel = !level || cardLevel === level;
+            const matchesCategory = !category || cardCategory === category;
+            // const matchesStatus = !status || cardStatus === status;
+
+            const isVisible = matchesLevel && matchesCategory; // Add && matchesStatus if using status filter
+            card.style.display = isVisible ? '' : 'none';
+             if (isVisible) visibleCount++;
+        });
+
+         // Show/hide no results message
+        const noResultsMessage = document.getElementById('noSponsorsMessage');
+        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+     // Confirm Deletion Function (Reusing from accommodations)
+    async function confirmDelete(type, id, name) {
+        if (confirm(`Are you sure you want to delete the ${type} "${name}"? This action cannot be undone.`)) {
+            try {
+                // Assuming a consistent API pattern like /sponsors/:id
+                const response = await fetch(`/${type}s/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // Add CSRF token if needed
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) { // Adjust based on your API response
+                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully.`);
+                    window.location.reload();
+                } else {
+                    alert(`Failed to delete ${type}: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error(`Error deleting ${type}:`, error);
+                alert(`An error occurred while trying to delete the ${type}.`);
+            }
+        }
+    }
+
+    // Add event listeners
+    document.getElementById('levelFilter').addEventListener('change', filterSponsors);
+    document.getElementById('categoryFilterSponsor').addEventListener('change', filterSponsors);
+    // document.getElementById('statusFilter').addEventListener('change', filterSponsors); // Add if status filter exists
+
+    // Initial filter on load
+    document.addEventListener('DOMContentLoaded', filterSponsors);
+</script>
+
+<style>
+    .sponsors-hero {
+        min-height: 50vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/sponsors-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+    .sponsors-filters .card {
+         background-color: var(--card-bg);
+         border-color: var(--bs-border-color);
+    }
+     .sponsors-filters .form-select, .sponsors-filters .form-control {
+        background-color: var(--input-bg);
+        color: var(--bs-body-color);
+        border-color: var(--bs-border-color);
+    }
+    .sponsors-filters .form-select {
+         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffd700' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+     .sponsors-filters .form-select:focus, .sponsors-filters .form-control:focus {
+         border-color: var(--bs-primary);
+         box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+    .sponsor-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+         background-color: var(--card-bg);
+         border: 1px solid var(--bs-border-color);
+    }
+    .sponsor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+    }
+    .sponsor-logo-container {
+        height: 150px; /* Fixed height for logo area */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
+    }
+    .sponsor-logo {
+        max-height: 100px; /* Max height within container */
+        max-width: 90%;
+        object-fit: contain;
+        filter: brightness(0) invert(1) grayscale(20%); /* Make logos white-ish */
+         transition: filter 0.3s ease;
+    }
+     .sponsor-card:hover .sponsor-logo {
+         filter: brightness(1) invert(0) grayscale(0%);
+     }
+     .sponsor-card .card-title {
+         color: var(--bs-body-color);
+     }
+     .sponsor-card .card-text {
+         color: rgba(255, 255, 255, 0.7);
+     }
+     .sponsor-card .card-footer {
+         background-color: rgba(255, 255, 255, 0.03);
+         border-top: 1px solid var(--bs-border-color);
+     }
+
+    /* Sponsorship Level Badges */
+    .badge.level-platinum { background: linear-gradient(135deg, #e5e4e2, #b4b4b4); color: #333; }
+    .badge.level-gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; }
+    .badge.level-silver { background: linear-gradient(135deg, #c0c0c0, #a9a9a9); color: #333; }
+    .badge.level-bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: white; }
+
+    .become-sponsor {
+        background-color: var(--bs-light-bg);
+    }
+     .become-sponsor h2 {
+         color: var(--bs-primary);
+     }
+</style>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-page {
+            padding: 40px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-header i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .success-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .success-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .info-item h4 {
+            margin: 0 0 5px 0;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .team-members {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .member-item:last-child {
+            border-bottom: none;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-info h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .member-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .member-role {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .role-leader {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .payment-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .registration-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #357abd;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4a90e2;
+            color: #4a90e2;
+        }
+
+        .btn-outline:hover {
+            background: #4a90e2;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .success-header h1 {
+                font-size: 2rem;
+            }
+
+            .success-content {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="success-page">
+        <div class="container">
+            <div class="success-header">
+                <i class="fas fa-check-circle"></i>
+                <h1>Registration Successful!</h1>
+                <p>You have successfully registered for <%= registration.EventName %></p>
+            </div>
+
+            <div class="success-content">
+                <div class="info-section">
+                    <h2>Event Details</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>Event Name</h4>
+                            <p><%= registration.EventName %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Date & Time</h4>
+                            <p>
+                                <%= new Date(registration.EventDate).toLocaleDateString() %>
+                                at <%= registration.EventTime %>
+                            </p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Venue</h4>
+                            <p><%= registration.VenueName || 'To be announced' %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Registration Fee</h4>
+                            <p>Rs. <%= registration.RegistrationFee %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Payment Status</h4>
+                            <p>
+                                <span class="payment-status status-<%= registration.PaymentStatus.toLowerCase() %>">
+                                    <%= registration.PaymentStatus %>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Registration Status</h4>
+                            <p>
+                                <span class="registration-status status-<%= registration.Status.toLowerCase() %>">
+                                    <%= registration.Status %>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Registration Date</h4>
+                            <p><%= new Date(registration.RegistrationDate).toLocaleString() %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (team) { %>
+                    <div class="info-section">
+                        <h2>Team Information</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <h4>Team Name</h4>
+                                <p><%= team.TeamName %></p>
+                            </div>
+                            <div class="info-item">
+                                <h4>Team Status</h4>
+                                <p><%= team.Status.charAt(0).toUpperCase() + team.Status.slice(1) %></p>
+                            </div>
+                            <div class="info-item">
+                                <h4>Team Members (<%= team.MemberCount %>)</h4>
+                                <ul class="team-members">
+                                    <% team.members.forEach(member => { %>
+                                        <li class="member-item">
+                                            <div class="member-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="member-info">
+                                                <h3><%= member.Name %></h3>
+                                                <p><%= member.Email %></p>
+                                            </div>
+                                            <span class="member-role <%= member.Role === 'Leader' ? 'role-leader' : '' %>">
+                                                <%= member.Role %>
+                                            </span>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="action-buttons">
+                    <% if (registration.PaymentStatus === 'Pending' && registration.RegistrationFee > 0) { %>
+                        <a href="/payments/pay/<%= registration.RegistrationID %>" class="btn btn-primary">
+                            Proceed to Payment
+                        </a>
+                    <% } %>
+                    <a href="/events/<%= registration.EventID %>" class="btn btn-outline">
+                        View Event Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html> 

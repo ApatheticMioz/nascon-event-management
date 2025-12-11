@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judges Management - NASCON</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .judges-page {
+            padding: 40px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .judges-header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .judges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .judge-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .judge-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .judge-info {
+            padding: 20px;
+        }
+
+        .judge-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .judge-details {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .judge-details p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .judge-details i {
+            width: 20px;
+            color: #4a90e2;
+        }
+
+        .judge-actions {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.875rem;
+        }
+
+        .status-active {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-inactive {
+            background: #dc3545;
+            color: white;
+        }
+
+        .add-judge-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #4a90e2;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .add-judge-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .filters {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="judges-page">
+        <div class="container">
+            <div class="judges-header">
+                <h1>Judges Management</h1>
+                <p>Manage and assign judges for NASCON events</p>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <select class="filter-select" id="specializationFilter">
+                        <option value="">All Specializations</option>
+                        <% if (locals.specializations) { %>
+                            <% specializations.forEach(spec => { %>
+                                <option value="<%= spec %>"><%= spec %></option>
+                            <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+
+            <div class="judges-grid">
+                <% if (judges && judges.length > 0) { %>
+                    <% judges.forEach(judge => { %>
+                        <div class="judge-card" 
+                             data-status="<%= judge.Status %>"
+                             data-specialization="<%= judge.Specialization %>">
+                            <div class="judge-info">
+                                <h3 class="judge-name"><%= judge.Name %></h3>
+                                <div class="judge-details">
+                                    <p><i class="fas fa-graduation-cap"></i> <%= judge.Specialization %></p>
+                                    <p><i class="fas fa-envelope"></i> <%= judge.Email %></p>
+                                    <% if (judge.Contact) { %>
+                                        <p><i class="fas fa-phone"></i> <%= judge.Contact %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="judge-actions">
+                                <span class="status-badge status-<%= judge.Status.toLowerCase() %>">
+                                    <%= judge.Status.charAt(0).toUpperCase() + judge.Status.slice(1) %>
+                                </span>
+                                <div class="action-buttons">
+                                    <% if (user && user.privileges && user.privileges.Judges) { %>
+                                        <% if (user.privileges.Judges.update) { %>
+                                            <a href="/judges/<%= judge.JudgeID %>/edit" class="btn btn-secondary">Edit</a>
+                                        <% } %>
+                                        <% if (user.privileges.Judges.delete) { %>
+                                            <form action="/judges/<%= judge.JudgeID %>?_method=DELETE" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        <% } %>
+                                        <% if (user.privileges.Judges.assign) { %>
+                                            <a href="/judges/<%= judge.JudgeID %>/assign" class="btn btn-info">Assign to Event</a>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="text-center w-100 py-5">
+                        <i class="fas fa-gavel fa-3x mb-3 text-muted"></i>
+                        <h3>No Judges Found</h3>
+                        <p>There are currently no judges to display.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <% if (user && user.privileges && user.privileges.Judges && user.privileges.Judges.create) { %>
+                <a href="/judges/add" class="btn btn-primary">Add Judge</a>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const specializationFilter = document.getElementById('specializationFilter');
+            const judgeCards = document.querySelectorAll('.judge-card');
+
+            function filterJudges() {
+                const status = statusFilter.value;
+                const specialization = specializationFilter.value;
+
+                judgeCards.forEach(card => {
+                    const matchesStatus = !status || card.dataset.status === status;
+                    const matchesSpecialization = !specialization || 
+                                                card.dataset.specialization === specialization;
+
+                    if (matchesStatus && matchesSpecialization) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            statusFilter.addEventListener('change', filterJudges);
+            specializationFilter.addEventListener('change', filterJudges);
+        });
+
+        async function toggleJudgeStatus(judgeId, currentStatus) {
+            try {
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                const response = await fetch(`/judges/${judgeId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to update judge status');
+                }
+            } catch (error) {
+                console.error('Error updating judge status:', error);
+                alert('Failed to update judge status');
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .venue-card {
+            transition: transform 0.2s;
+            margin-bottom: 1.5rem;
+            height: 100%;
+        }
+        
+        .venue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .venue-type-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+
+        .venue-filters {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .venue-details {
+            font-size: 0.9rem;
+        }
+
+        .venue-details i {
+            width: 20px;
+            color: #6c757d;
+        }
+
+        .map-container {
+            height: 200px;
+            margin: 1rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .venue-actions {
+            margin-top: auto;
+        }
+
+        .venue-capacity {
+            background: #e9ecef;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .venue-events {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>NASCON 2025 Venues (Islamabad)</h1>
+            <% if (user && user.privileges && user.privileges.venues && user.privileges.venues.create) { %>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#venueModal">
+                    <i class="fas fa-plus"></i> Add New Venue
+                </button>
+            <% } %>
+        </div>
+
+        <!-- Venue Filters -->
+        <div class="venue-filters">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="typeFilter" class="form-label">Venue Type</label>
+                    <select class="form-select" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="Auditorium">Auditorium</option>
+                        <option value="Hall">Hall</option>
+                        <option value="Lab">Lab</option>
+                        <option value="Outdoor Space">Outdoor Space</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="capacityFilter" class="form-label">Minimum Capacity</label>
+                    <input type="number" class="form-control" id="capacityFilter" min="1">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="availabilityFilter" class="form-label">Availability</label>
+                    <select class="form-select" id="availabilityFilter">
+                        <option value="">All Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Under Maintenance">Under Maintenance</option>
+                        <option value="Unavailable">Unavailable</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-secondary w-100" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> Reset Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Venues List -->
+        <div class="row" id="venuesList">
+            <% venues.forEach(venue => { %>
+                <div class="col-md-4">
+                    <div class="card venue-card">
+                        <div class="card-body">
+                            <span class="badge <%= venue.Status === 'Available' ? 'bg-success' : 
+                                                venue.Status === 'Under Maintenance' ? 'bg-warning' : 
+                                                'bg-danger' %> status-badge">
+                                <%= venue.Status %>
+                            </span>
+                            
+                            <div class="text-center">
+                                <i class="fas <%= venue.VenueType === 'Auditorium' ? 'fa-theater-masks' :
+                                                venue.VenueType === 'Hall' ? 'fa-door-open' :
+                                                venue.VenueType === 'Lab' ? 'fa-flask' :
+                                                'fa-tree' %> venue-type-icon"></i>
+                                <h5 class="card-title"><%= venue.Name %></h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><%= venue.VenueType %></h6>
+                            </div>
+
+                            <div class="venue-details">
+                                <p><i class="fas fa-map-marker-alt"></i> <%= venue.Address %></p>
+                                <% if (venue.Location) { %>
+                                    <p><i class="fas fa-location-dot"></i> <%= venue.Location %></p>
+                                <% } %>
+                                <% if (venue.Capacity) { %>
+                                    <p><i class="fas fa-users"></i> Capacity: <%= venue.Capacity %></p>
+                                <% } %>
+                                <% if (venue.Availability) { %>
+                                    <p><i class="fas fa-clock"></i> <%= venue.Availability %></p>
+                                <% } %>
+                                <% if (venue.EventCount > 0) { %>
+                                    <p class="venue-events">
+                                        <i class="fas fa-calendar"></i> <%= venue.EventCount %> event<%= venue.EventCount === 1 ? '' : 's' %>
+                                    </p>
+                                <% } %>
+                            </div>
+
+                            <% if (venue.Description) { %>
+                                <p class="card-text mt-3"><%= venue.Description %></p>
+                            <% } %>
+
+                            <div class="venue-actions mt-3">
+                                <% if (user && user.privileges && user.privileges.venues) { %>
+                                    <div class="d-flex justify-content-end">
+                                        <% if (user.privileges.venues.update) { %>
+                                            <button class="btn btn-sm btn-outline-primary me-2" onclick="editVenue(<%= venue.VenueID %>)">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        <% } %>
+                                        <% if (user.privileges.venues.delete) { %>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteVenue(<%= venue.VenueID %>)">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Venue Modal -->
+    <div class="modal fade" id="venueModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add New Venue</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="venueForm">
+                        <input type="hidden" id="venueId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Venue Name*</label>
+                                <input type="text" class="form-control" id="name" required maxlength="100">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="venueType" class="form-label">Venue Type*</label>
+                                <select class="form-select" id="venueType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Auditorium">Auditorium</option>
+                                    <option value="Hall">Hall</option>
+                                    <option value="Lab">Lab</option>
+                                    <option value="Outdoor Space">Outdoor Space</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address*</label>
+                            <input type="text" class="form-control" id="address" required maxlength="255">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" maxlength="255">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="capacity" class="form-label">Capacity</label>
+                                <input type="number" class="form-control" id="capacity" min="1">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="availability" class="form-label">Availability</label>
+                                <input type="text" class="form-control" id="availability" maxlength="50">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status">
+                                    <option value="Available">Available</option>
+                                    <option value="Under Maintenance">Under Maintenance</option>
+                                    <option value="Unavailable">Unavailable</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="facilities" class="form-label">Facilities</label>
+                            <textarea class="form-control" id="facilities" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="equipment" class="form-label">Equipment</label>
+                            <textarea class="form-control" id="equipment" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="restrictions" class="form-label">Restrictions</label>
+                            <textarea class="form-control" id="restrictions" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mapEmbedURL" class="form-label">Map Embed URL</label>
+                            <input type="text" class="form-control" id="mapEmbedURL">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="contactPerson" class="form-label">Contact Person</label>
+                                <input type="text" class="form-control" id="contactPerson" maxlength="100">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="contactEmail" class="form-label">Contact Email</label>
+                                <input type="email" class="form-control" id="contactEmail" maxlength="100">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="contactPhone" class="form-label">Contact Phone</label>
+                                <input type="tel" class="form-control" id="contactPhone" maxlength="20">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveVenue">Save Venue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Filter venues
+        function filterVenues() {
+            const type = document.getElementById('typeFilter').value;
+            const capacity = document.getElementById('capacityFilter').value;
+            const availability = document.getElementById('availabilityFilter').value;
+
+            const queryParams = new URLSearchParams();
+            if (type) queryParams.append('type', type);
+            if (capacity) queryParams.append('capacity', capacity);
+            if (availability) queryParams.append('availability', availability);
+
+            window.location.href = `/venues?${queryParams.toString()}`;
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('capacityFilter').value = '';
+            document.getElementById('availabilityFilter').value = '';
+            window.location.href = '/venues';
+        }
+
+        // Initialize form for new venue
+        function initNewVenue() {
+            document.getElementById('modalTitle').textContent = 'Add New Venue';
+            document.getElementById('venueForm').reset();
+            document.getElementById('venueId').value = '';
+        }
+
+        // Load venue data for editing
+        async function editVenue(id) {
+            try {
+                const response = await fetch(`/venues/${id}`);
+                const venue = await response.json();
+                
+                document.getElementById('modalTitle').textContent = 'Edit Venue';
+                document.getElementById('venueId').value = venue.VenueID;
+                
+                // Populate form fields
+                Object.keys(venue).forEach(key => {
+                    const element = document.getElementById(key.toLowerCase());
+                    if (element) {
+                        element.value = venue[key];
+                    }
+                });
+
+                const modal = new bootstrap.Modal(document.getElementById('venueModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading venue details:', error);
+                alert('Error loading venue details. Please try again.');
+            }
+        }
+
+        // Save venue (create or update)
+        async function saveVenue() {
+            const venueId = document.getElementById('venueId').value;
+            const isNewVenue = !venueId;
+
+            const venueData = {
+                name: document.getElementById('name').value,
+                address: document.getElementById('address').value,
+                location: document.getElementById('location').value,
+                capacity: document.getElementById('capacity').value,
+                availability: document.getElementById('availability').value,
+                facilities: document.getElementById('facilities').value,
+                mapEmbedURL: document.getElementById('mapEmbedURL').value,
+                description: document.getElementById('description').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                venueType: document.getElementById('venueType').value,
+                status: document.getElementById('status').value,
+                equipment: document.getElementById('equipment').value,
+                restrictions: document.getElementById('restrictions').value
+            };
+
+            try {
+                const response = await fetch(`/venues${isNewVenue ? '' : `/${venueId}`}`, {
+                    method: isNewVenue ? 'POST' : 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(venueData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to save venue');
+                }
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('venueModal'));
+                modal.hide();
+                window.location.reload();
+            } catch (error) {
+                console.error('Error saving venue:', error);
+                alert(error.message);
+            }
+        }
+
+        // Delete venue
+        async function deleteVenue(id) {
+            if (!confirm('Are you sure you want to delete this venue?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/venues/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete venue');
+                }
+
+                window.location.reload();
+            } catch (error) {
+                console.error('Error deleting venue:', error);
+                alert(error.message);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reset form when modal is opened for new venue
+            document.getElementById('venueModal').addEventListener('show.bs.modal', (event) => {
+                if (!event.relatedTarget) return; // Don't reset if opened for editing
+                initNewVenue();
+            });
+
+            // Save venue when form is submitted
+            document.getElementById('saveVenue').addEventListener('click', saveVenue);
+
+            // Filter change events
+            document.getElementById('typeFilter').addEventListener('change', filterVenues);
+            document.getElementById('capacityFilter').addEventListener('change', filterVenues);
+            document.getElementById('availabilityFilter').addEventListener('change', filterVenues);
+        });
+    </script>
+
+    <%- include('partials/footer') %>
+</body>
+</html> 

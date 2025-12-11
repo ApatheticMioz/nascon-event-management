@@ -1,0 +1,231 @@
+<%- include('partials/header', { title: 'Events' }) %>
+
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold mb-3" style="color: var(--bs-primary);">NASCON Events</h1>
+    <p class="lead text-muted">Discover competitions, workshops, and sessions</p>
+  </div>
+
+  <div class="filters-section card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label for="searchFilter" class="form-label small text-muted">Search Events</label>
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-primary"></i></span>
+            <input type="text" class="form-control border-start-0" id="searchFilter" placeholder="Search by name or description...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="categoryFilter" class="form-label small text-muted">Category</label>
+          <select class="form-select" id="categoryFilter">
+            <option value="">All Categories</option>
+            <% let categories = [...new Set(events.map(e => e.CategoryName).filter(Boolean))]; %>
+            <% categories.sort().forEach(category => { %>
+              <option value="<%= category %>"><%= category %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="typeFilter" class="form-label small text-muted">Type</label>
+          <select class="form-select" id="typeFilter">
+            <option value="">All Types</option>
+            <option value="Individual">Individual</option>
+            <option value="Team">Team</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="statusFilter" class="form-label small text-muted">Status</label>
+          <select class="form-select" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="Published">Published</option>
+            <option value="Ongoing">Ongoing</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Draft">Draft</option>
+          </select>
+        </div>
+        <% if (locals.user && locals.user.privileges && locals.user.privileges.Events && locals.user.privileges.Events.create) { %>
+          <div class="col-md-1 d-grid">
+             <label class="form-label small text-muted">&nbsp;</label> <a href="/events/add" class="btn btn-primary" title="Add New Event">
+              <i class="fas fa-plus"></i>
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4" id="eventsGrid">
+    <% if (events && events.length > 0) { %>
+      <% events.forEach(event => { %>
+        <%
+          let eventDate = '';
+          let deadlineDate = '';
+          try {
+            eventDate = event.Date ? new Date(event.Date).toLocaleDateString('en-CA') : ''; // YYYY-MM-DD format
+            deadlineDate = event.RegistrationDeadline ? new Date(event.RegistrationDeadline).toLocaleDateString('en-CA') : '';
+          } catch (e) {
+            console.error('Error formatting date for event:', event.EventID, e);
+          }
+          const eventStatusClass = event.Status ? event.Status.toLowerCase().replace(' ', '-') : 'draft';
+        %>
+        <div class="col-lg-4 col-md-6 event-card-wrapper"
+             data-category="<%= event.CategoryName || '' %>"
+             data-type="<%= event.EventType || '' %>"
+             data-status="<%= event.Status || '' %>"
+             data-date="<%= eventDate %>">
+          <div class="card h-100 shadow-sm event-card-hover">
+            <div class="card-header d-flex justify-content-between align-items-center">
+               <span class="badge bg-<%= eventStatusClass %> text-dark"><%= event.Status || 'Draft' %></span>
+               <span class="fw-bold text-primary">
+                 <%= event.Reg_Fee ? `Rs. ${parseFloat(event.Reg_Fee).toFixed(2)}` : 'Free' %>
+               </span>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title mb-2"><%= event.Name || 'Untitled Event' %></h5>
+              <p class="card-subtitle mb-2 text-muted small">
+                <i class="fas fa-tag me-1"></i> <%= event.CategoryName || 'Uncategorized' %> | <i class="fas fa-users ms-2 me-1"></i> <%= event.EventType || 'N/A' %>
+              </p>
+              <p class="card-text small text-muted flex-grow-1 description-clamp"><%= event.EventDescription || 'No description available.' %></p>
+
+              <div class="mt-3 small text-muted">
+                <p class="mb-1"><i class="fas fa-calendar-alt me-1 text-primary"></i> <%= eventDate ? new Date(event.Date).toLocaleDateString() : 'Date TBD' %> at <%= event.Time || 'Time TBD' %></p>
+                <% if (event.VenueName) { %>
+                  <p class="mb-1"><i class="fas fa-map-marker-alt me-1 text-primary"></i> <%= event.VenueName %></p>
+                <% } %>
+                <% if (event.RegistrationDeadline) { %>
+                  <p class="mb-0"><i class="fas fa-hourglass-end me-1 text-primary"></i> Reg. Deadline: <%= deadlineDate ? new Date(event.RegistrationDeadline).toLocaleDateString() : 'N/A' %></p>
+                <% } %>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-2">
+               <a href="/events/<%= event.EventID %>" class="btn btn-sm btn-outline-primary">
+                 <i class="fas fa-eye me-1"></i> View
+               </a>
+               <% if (locals.user && locals.user.privileges && locals.user.privileges.Events) { %>
+                 <% if (user.privileges.Events.update) { %>
+                   <a href="/events/edit/<%= event.EventID %>" class="btn btn-sm btn-outline-secondary">
+                     <i class="fas fa-edit me-1"></i> Edit
+                   </a>
+                 <% } %>
+                 <% if (user.privileges.Events.delete) { %>
+                    <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('<%= event.EventID %>', '<%= event.Name %>')">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                 <% } %>
+               <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="col-12">
+        <div class="alert alert-secondary text-center" role="alert">
+          <i class="fas fa-info-circle fa-2x mb-3"></i>
+          <p class="mb-0">No events found matching the current filters.</p>
+        </div>
+      </div>
+    <% } %>
+  </div> <div id="noResultsMessage" class="col-12 text-center py-5" style="display: none;">
+      <i class="fas fa-search fa-3x text-muted mb-3"></i>
+      <p class="text-muted">No events match your search or filter criteria.</p>
+  </div>
+
+</div> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+  .event-card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .event-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+  }
+  .description-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* Show 3 lines */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 4.5em; /* Adjust based on line-height and font-size */
+  }
+  .badge.bg-draft { background-color: #6c757d !important; color: white !important; }
+  .badge.bg-published { background-color: #198754 !important; color: white !important; }
+  .badge.bg-ongoing { background-color: #0d6efd !important; color: white !important; }
+  .badge.bg-completed { background-color: #0dcaf0 !important; color: black !important; }
+  .badge.bg-cancelled { background-color: #dc3545 !important; color: white !important; }
+</style>
+
+<script>
+    function filterEvents() {
+        const search = document.getElementById('searchFilter').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+        const type = document.getElementById('typeFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const cards = document.querySelectorAll('.event-card-wrapper');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardCategory = card.dataset.category || '';
+            const cardType = card.dataset.type || '';
+            const cardStatus = card.dataset.status || '';
+            const cardContent = card.textContent.toLowerCase();
+
+            const matchesSearch = !search || cardContent.includes(search);
+            const matchesCategory = !category || cardCategory === category;
+            const matchesType = !type || cardType === type;
+            const matchesStatus = !status || cardStatus === status;
+
+            const isVisible = matchesSearch && matchesCategory && matchesType && matchesStatus;
+            card.style.display = isVisible ? '' : 'none';
+            if (isVisible) visibleCount++;
+        });
+
+        // Show/hide no results message
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Confirm Deletion Function
+    async function confirmDelete(eventId, eventName) {
+        if (confirm(`Are you sure you want to delete the event "${eventName}"? This action cannot be undone.`)) {
+            try {
+                const response = await fetch(`/events/${eventId}`, { // Use the correct API endpoint for deletion
+                    method: 'DELETE',
+                    headers: {
+                        // Include necessary headers like CSRF token if your app uses them
+                        'Content-Type': 'application/json'
+                        // 'X-CSRF-Token': 'YOUR_CSRF_TOKEN' // Example if needed
+                    }
+                });
+
+                const result = await response.json(); // Assuming the server responds with JSON
+
+                if (response.ok && result.success) {
+                    alert('Event deleted successfully.');
+                    // Optionally remove the card from the DOM or reload the page
+                    window.location.reload();
+                } else {
+                    alert(`Failed to delete event: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting event:', error);
+                alert('An error occurred while trying to delete the event.');
+            }
+        }
+    }
+
+
+    // Add event listeners
+    document.getElementById('searchFilter').addEventListener('input', filterEvents);
+    document.getElementById('categoryFilter').addEventListener('change', filterEvents);
+    document.getElementById('typeFilter').addEventListener('change', filterEvents);
+    document.getElementById('statusFilter').addEventListener('change', filterEvents);
+
+    // Initial filter on load
+    document.addEventListener('DOMContentLoaded', filterEvents);
+</script>
+
+<%- include('partials/footer') %>

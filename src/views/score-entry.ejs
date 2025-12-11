@@ -1,0 +1,260 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Score Entry - <%= event.Name %></h2>
+                    <span class="badge bg-light text-primary">Judge: <%= user.name %></span>
+                </div>
+                <div class="card-body">
+                    <!-- Participant Selection -->
+                    <div class="mb-4">
+                        <label for="participantSelect" class="form-label">Select Participant</label>
+                        <select class="form-select" id="participantSelect" required>
+                            <option value="">Choose a participant...</option>
+                            <% participants.forEach(participant => { %>
+                                <option value="<%= participant.UserID %>"><%= participant.Name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <!-- Scoring Form -->
+                    <form id="scoringForm" class="scoring-criteria">
+                        <% criteria.forEach(criterion => { %>
+                            <div class="mb-3">
+                                <label class="form-label"><%= criterion.name %></label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                           class="form-control" 
+                                           name="<%= criterion.id %>" 
+                                           min="0" 
+                                           max="<%= criterion.maxScore %>" 
+                                           step="0.5"
+                                           required>
+                                    <span class="input-group-text">/ <%= criterion.maxScore %></span>
+                                </div>
+                                <small class="text-muted"><%= criterion.description %></small>
+                            </div>
+                        <% }); %>
+
+                        <div class="mb-3">
+                            <label class="form-label">Comments (Optional)</label>
+                            <textarea class="form-control" id="comments" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="h4">Total Score: </span>
+                                <span id="totalScore" class="h4 text-primary">0</span>
+                                <span class="h4">/ <%= totalMaxScore %></span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary me-2" onclick="resetForm()">Reset</button>
+                                <button type="submit" class="btn btn-primary">Submit Scores</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Scores Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Previous Scores</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Participant</th>
+                                    <% criteria.forEach(criterion => { %>
+                                        <th><%= criterion.name %></th>
+                                    <% }); %>
+                                    <th>Total</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previousScores">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (user && user.privileges && user.privileges.Scores && user.privileges.Scores.create) { %>
+  <a href="/scores/add" class="btn btn-primary">Add Score</a>
+<% } %>
+
+<script>
+let currentScores = {};
+
+// Calculate total score
+function calculateTotal() {
+    let total = 0;
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        total += parseFloat(input.value || 0);
+    });
+    document.getElementById('totalScore').textContent = total.toFixed(1);
+}
+
+// Reset form
+function resetForm() {
+    document.getElementById('scoringForm').reset();
+    calculateTotal();
+}
+
+// Load previous scores
+async function loadPreviousScores() {
+    try {
+        const response = await fetch(`/scores/event/<%= event.EventID %>`);
+        const scores = await response.json();
+        
+        const tbody = document.getElementById('previousScores');
+        tbody.innerHTML = '';
+        
+        const groupedScores = {};
+        scores.forEach(score => {
+            if (!groupedScores[score.ParticipantUserID]) {
+                groupedScores[score.ParticipantUserID] = {
+                    name: score.ParticipantName,
+                    scores: {},
+                    createdAt: score.CreatedAt
+                };
+            }
+            groupedScores[score.ParticipantUserID].scores[score.Criteria] = score;
+        });
+
+        Object.entries(groupedScores).forEach(([participantId, data]) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${data.name}</td>
+                ${criteria.map(criterion => `
+                    <td>${data.scores[criterion.id]?.Value || '-'}</td>
+                `).join('')}
+                <td>${Object.values(data.scores).reduce((sum, score) => sum + (score.Value || 0), 0).toFixed(1)}</td>
+                <td>${new Date(data.createdAt).toLocaleString()}</td>
+                <td>
+                    <% if (user && user.privileges && user.privileges.Scores) { %>
+                        <% if (user.privileges.Scores.update) { %>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editScores('${participantId}')">
+                                Edit
+                            </button>
+                        <% } %>
+                        <% if (user.privileges.Scores.delete) { %>
+                            <form action="/scores/${data.scores[criteria[0].id]?.ScoreID %>?_method=DELETE" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading previous scores:', error);
+        alert('Failed to load previous scores');
+    }
+}
+
+// Submit scores
+document.getElementById('scoringForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const participantId = document.getElementById('participantSelect').value;
+    if (!participantId) {
+        alert('Please select a participant');
+        return;
+    }
+
+    const scores = [];
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        scores.push({
+            criteria: input.name,
+            value: parseFloat(input.value || 0)
+        });
+    });
+
+    try {
+        const response = await fetch('/scores', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                eventId: <%= event.EventID %>,
+                participantId,
+                scores
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit scores');
+        }
+
+        alert('Scores submitted successfully');
+        resetForm();
+        loadPreviousScores();
+    } catch (error) {
+        console.error('Error submitting scores:', error);
+        alert('Failed to submit scores');
+    }
+});
+
+// Edit previous scores
+function editScores(participantId) {
+    document.getElementById('participantSelect').value = participantId;
+    const scores = currentScores[participantId];
+    if (scores) {
+        Object.entries(scores).forEach(([criterion, value]) => {
+            const input = document.querySelector(`input[name="${criterion}"]`);
+            if (input) {
+                input.value = value;
+            }
+        });
+        calculateTotal();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadPreviousScores();
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+});
+</script>
+
+<style>
+.scoring-criteria {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.input-group {
+    width: 200px;
+}
+
+.table th {
+    white-space: nowrap;
+}
+</style>
+
+<%- include('partials/footer') %> 

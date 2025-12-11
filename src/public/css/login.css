@@ -1,0 +1,156 @@
+:root {
+    --primary-color: #FFD700;
+    --primary-dark: #C9B037;
+    --secondary-color: #181818;
+    --accent-color: #FFD700;
+    --text-color: #fff;
+    --text-secondary: #C9B037;
+    --bg-color: #111;
+    --card-bg: #181818;
+    --border-color: #FFD700;
+    --input-bg: #222;
+    --error-color: #e74c3c;
+}
+
+/* Login Page Styles */
+.login-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: var(--bg-color);
+}
+
+.login-form-container {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form-container h1 {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Form Styles */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.form-group.remember-me {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group.remember-me input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.form-group.remember-me label {
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.register-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Error states */
+.form-group input.invalid {
+    border-color: var(--error-color);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .login-form-container {
+        background-color: var(--dark-card-bg);
+    }
+
+    .form-group label {
+        color: #fff;
+    }
+
+    .form-group input {
+        background-color: var(--dark-input-bg);
+        border-color: var(--dark-border-color);
+        color: #fff;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary-color);
+    }
+} 

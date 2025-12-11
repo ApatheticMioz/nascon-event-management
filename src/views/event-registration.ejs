@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .registration-page {
+            padding: 40px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .registration-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .registration-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .team-section {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .team-members {
+            margin-top: 20px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #dc3545;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .add-member-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #357abd;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .registration-header h1 {
+                font-size: 2rem;
+            }
+
+            .registration-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="registration-page">
+        <div class="container">
+            <div class="registration-header">
+                <h1>Event Registration</h1>
+                <p>Register for <%= event.Name %></p>
+            </div>
+
+            <div class="registration-form">
+                <form id="registrationForm" onsubmit="submitRegistration(event)">
+                    <div class="form-section">
+                        <h2>Event Information</h2>
+                        <div class="form-group">
+                            <label>Event Name</label>
+                            <input type="text" value="<%= event.Name %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Event Date</label>
+                            <input type="text" value="<%= new Date(event.Date).toLocaleDateString() %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Registration Fee</label>
+                            <input type="text" value="Rs. <%= event.Reg_Fee %>" readonly>
+                        </div>
+                    </div>
+
+                    <% if (event.EventType === 'Team' || event.EventType === 'Both') { %>
+                        <div class="form-section">
+                            <h2>Team Information</h2>
+                            <div class="form-group">
+                                <label for="teamName">Team Name</label>
+                                <input type="text" id="teamName" name="teamName" required>
+                            </div>
+                            <div class="team-members">
+                                <h3>Team Members</h3>
+                                <div id="membersList"></div>
+                                <button type="button" class="add-member-btn" onclick="showAddMemberForm()">
+                                    <i class="fas fa-plus"></i> Add Team Member
+                                </button>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <div class="form-section">
+                        <h2>Additional Information</h2>
+                        <div class="form-group">
+                            <label for="specialRequirements">Special Requirements</label>
+                            <textarea id="specialRequirements" name="specialRequirements" placeholder="Any special requirements or notes"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Complete Registration</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        let teamMembers = [];
+
+        function showAddMemberForm() {
+            const email = prompt('Enter team member email:');
+            if (email) {
+                addTeamMember(email);
+            }
+        }
+
+        async function addTeamMember(email) {
+            try {
+                // First, check if user exists
+                const response = await fetch(`/auth/users/${email}`);
+                const userData = await response.json();
+
+                if (!userData || !userData.UserID) {
+                    alert('User not found with this email');
+                    return;
+                }
+
+                // Check if user is already in team
+                if (teamMembers.some(member => member.email === email)) {
+                    alert('This user is already in the team');
+                    return;
+                }
+
+                // Add member to list
+                teamMembers.push({
+                    id: userData.UserID,
+                    name: userData.Name,
+                    email: email
+                });
+
+                // Update UI
+                updateMembersList();
+            } catch (error) {
+                console.error('Error adding team member:', error);
+                alert('Failed to add team member');
+            }
+        }
+
+        function removeMember(email) {
+            teamMembers = teamMembers.filter(member => member.email !== email);
+            updateMembersList();
+        }
+
+        function updateMembersList() {
+            const list = document.getElementById('membersList');
+            list.innerHTML = teamMembers.map(member => `
+                <div class="member-item">
+                    <div class="member-info">
+                        <strong>${member.name}</strong>
+                        <div>${member.email}</div>
+                    </div>
+                    <div class="member-actions">
+                        <button type="button" onclick="removeMember('${member.email}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function submitRegistration(event) {
+            event.preventDefault();
+            const form = event.target;
+
+            try {
+                // First, create registration
+                const registrationResponse = await fetch('/registration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        eventId: parseInt('<%= event.EventID %>'),
+                        specialRequirements: form.specialRequirements.value
+                    })
+                });
+
+                if (!registrationResponse.ok) {
+                    throw new Error('Registration failed');
+                }
+
+                const registrationData = await registrationResponse.json();
+
+                // If team registration, create team
+                <% if (event.EventType === 'Team' || event.EventType === 'Both') { %>
+                    if (teamMembers.length > 0) {
+                        const teamResponse = await fetch('/teams', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                teamName: form.teamName.value,
+                                eventId: parseInt('<%= event.EventID %>')
+                            })
+                        });
+
+                        if (!teamResponse.ok) {
+                            throw new Error('Team creation failed');
+                        }
+
+                        const teamData = await teamResponse.json();
+
+                        // Update registration with team ID
+                        const updateResponse = await fetch(`/registration/${registrationData.registrationId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                teamId: teamData.teamId
+                            })
+                        });
+
+                        if (!updateResponse.ok) {
+                            throw new Error('Failed to update registration with team');
+                        }
+                    }
+                <% } %>
+
+                // Redirect to success page
+                window.location.href = `/registration/success?id=${registrationData.registrationId}`;
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Accommodation - NASCON</title>
+    <link rel="stylesheet" href="/css/accommodation-form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="accommodation-form-page">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Add New Accommodation</h1>
+                <p>Fill in the details below to add a new accommodation option for NASCON participants</p>
+            </div>
+
+            <form action="/accommodations/add" method="POST" enctype="multipart/form-data" id="accommodationForm">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Accommodation Name *</label>
+                        <input type="text" id="name" name="name" required 
+                               placeholder="Enter accommodation name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" required 
+                               placeholder="Enter location">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="capacity">Capacity *</label>
+                        <input type="number" id="capacity" name="capacity" required min="1"
+                               placeholder="Enter maximum capacity">
+                        <small>Enter the maximum number of people this accommodation can host</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="availability">Availability *</label>
+                        <select id="availability" name="availability" required>
+                            <option value="">Select availability</option>
+                            <option value="Available">Available</option>
+                            <option value="Limited">Limited</option>
+                            <option value="Fully Booked">Fully Booked</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budgetRange">Budget Range (PKR) *</label>
+                        <input type="text" id="budgetRange" name="budgetRange" required 
+                               placeholder="e.g., 5000-10000">
+                        <small>Enter the price range in PKR (min-max format)</small>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h2><i class="fas fa-address-book"></i> Contact Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="contactInfo">Contact Details *</label>
+                        <textarea id="contactInfo" name="contactInfo" required rows="3"
+                                  placeholder="Enter contact information (phone, email, etc.)"></textarea>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="form-section">
+                    <h2><i class="fas fa-align-left"></i> Description</h2>
+                    
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" required rows="4"
+                                  placeholder="Enter detailed description of the accommodation"></textarea>
+                    </div>
+                </div>
+
+                <!-- Amenities Section -->
+                <div class="form-section">
+                    <h2><i class="fas fa-concierge-bell"></i> Amenities</h2>
+                    
+                    <div class="amenities-grid">
+                        <div class="amenity-item">
+                            <input type="checkbox" id="wifi" name="amenities" value="WiFi">
+                            <label for="wifi">WiFi</label>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" id="parking" name="amenities" value="Parking">
+                            <label for="parking">Parking</label>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" id="ac" name="amenities" value="Air Conditioning">
+                            <label for="ac">Air Conditioning</label>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" id="breakfast" name="amenities" value="Breakfast">
+                            <label for="breakfast">Breakfast</label>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" id="pool" name="amenities" value="Swimming Pool">
+                            <label for="pool">Swimming Pool</label>
+                        </div>
+                        <div class="amenity-item">
+                            <input type="checkbox" id="gym" name="amenities" value="Gym">
+                            <label for="gym">Gym</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photos Section -->
+                <div class="form-section">
+                    <h2><i class="fas fa-camera"></i> Photos</h2>
+                    
+                    <div class="photo-upload" id="photoUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop photos here or click to browse</p>
+                        <input type="file" id="photos" name="photos" multiple accept="image/*" style="display: none;">
+                        <button type="button" class="btn btn-secondary" id="browseButton">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                    </div>
+
+                    <div class="photo-preview" id="photoPreview"></div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Accommodation
+                    </button>
+                    <a href="/accommodations" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Photo Upload Preview
+        const photoUpload = document.getElementById('photoUpload');
+        const photoInput = document.getElementById('photos');
+        const photoPreview = document.getElementById('photoPreview');
+        const browseButton = document.getElementById('browseButton');
+
+        // Open file explorer when clicking the browse button
+        browseButton.addEventListener('click', () => {
+            photoInput.click();
+        });
+
+        // Open file explorer when clicking the upload area
+        photoUpload.addEventListener('click', (e) => {
+            // Only trigger if clicking the upload area itself, not its children
+            if (e.target === photoUpload) {
+                photoInput.click();
+            }
+        });
+
+        // Drag and drop functionality
+        photoUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoUpload.style.borderColor = 'var(--secondary-color)';
+        });
+
+        photoUpload.addEventListener('dragleave', () => {
+            photoUpload.style.borderColor = 'var(--border-color)';
+        });
+
+        photoUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoUpload.style.borderColor = 'var(--border-color)';
+            photoInput.files = e.dataTransfer.files;
+            handleFiles(e.dataTransfer.files);
+        });
+
+        photoInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            photoPreview.innerHTML = '';
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.createElement('div');
+                        preview.className = 'preview-item';
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="remove-photo" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        photoPreview.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Form Validation
+        const form = document.getElementById('accommodationForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Validate budget range format
+            const budgetRange = document.getElementById('budgetRange').value;
+            if (!/^\d+-\d+$/.test(budgetRange)) {
+                alert('Please enter budget range in the format: min-max (e.g., 5000-10000)');
+                return;
+            }
+
+            // Validate capacity
+            const capacity = document.getElementById('capacity').value;
+            if (capacity <= 0) {
+                alert('Capacity must be greater than 0');
+                return;
+            }
+
+            // Validate photos
+            if (photoInput.files.length === 0) {
+                alert('Please upload at least one photo');
+                return;
+            }
+
+            // If all validations pass, submit the form
+            form.submit();
+        });
+    </script>
+</body>
+</html> 

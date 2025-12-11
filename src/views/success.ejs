@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            padding: 3rem 2rem;
+            text-align: center;
+            max-width: 400px;
+        }
+        .success-container i {
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .success-container h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .success-container p {
+            margin-bottom: 2rem;
+        }
+        .btn {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <i class="fas fa-check-circle"></i>
+        <h1><%= title %></h1>
+        <p><%= message %></p>
+        <a href="<%= backUrl %>" class="btn">Back to Accommodations</a>
+    </div>
+</body>
+</html> 

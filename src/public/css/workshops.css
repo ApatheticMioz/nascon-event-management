@@ -1,0 +1,209 @@
+<%- include('partials/header', { title: 'Workshops & Speakers', pageCss: 'workshops' }) %>
+
+<section class="workshops-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container hero-content">
+    <h1 class="display-4 fw-bold mb-3">Workshops & Guest Speakers</h1>
+    <p class="lead mb-0">Enhance skills and gain insights from industry experts at NASCON 2025</p>
+  </div>
+</section>
+
+<section class="overview py-5">
+  <div class="container text-center">
+    <h2 class="mb-4 fw-bold text-primary">Learn & Grow</h2>
+    <p class="lead text-muted mx-auto" style="max-width: 800px;">
+      NASCON brings together industry experts and thought leaders. Our workshops offer hands-on experience, while speaker sessions provide valuable insights into the latest tech trends.
+    </p>
+  </div>
+</section>
+
+<section class="workshops py-5" id="workshops" style="background-color: var(--bs-light-bg);">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Upcoming Workshops</h2>
+    <div class="row g-4" id="workshopsGrid">
+      <div class="col-12 text-center py-5 loading-placeholder">
+          <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2 text-muted">Loading workshops...</p>
+      </div>
+    </div>
+    <div id="noWorkshopsMessage" class="col-12 text-center py-5" style="display: none;">
+        <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No upcoming workshops scheduled yet. Please check back later!</p>
+    </div>
+  </div>
+</section>
+
+<section class="speakers py-5" id="speakers">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Guest Speakers</h2>
+    <div class="row g-4" id="speakersGrid">
+      <div class="col-12 text-center py-5 loading-placeholder">
+          <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2 text-muted">Loading speakers...</p>
+      </div>
+    </div>
+     <div id="noSpeakersMessage" class="col-12 text-center py-5" style="display: none;">
+        <i class="fas fa-microphone-alt fa-3x text-muted mb-3"></i>
+        <p class="text-muted">Guest speaker lineup will be announced soon!</p>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+    // --- Fetch and Display Workshops ---
+    async function loadWorkshops() {
+        const workshopsGrid = document.getElementById('workshopsGrid');
+        const loadingPlaceholder = workshopsGrid.querySelector('.loading-placeholder');
+        const noWorkshopsMessage = document.getElementById('noWorkshopsMessage');
+
+        try {
+            const response = await fetch('/workshops/api/workshops'); // Ensure this endpoint exists and returns data
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const workshops = await response.json();
+
+            if (loadingPlaceholder) loadingPlaceholder.remove(); // Remove loading indicator
+
+            if (workshops.length === 0) {
+                 if(noWorkshopsMessage) noWorkshopsMessage.style.display = 'block';
+                 return;
+            }
+
+            workshopsGrid.innerHTML = ''; // Clear grid before adding new cards
+
+            workshops.forEach(workshop => {
+                const workshopCard = document.createElement('div');
+                workshopCard.className = 'col-lg-4 col-md-6';
+                workshopCard.innerHTML = `
+                    <div class="card h-100 shadow-sm workshop-card">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-semibold mb-2">${workshop.Title || 'Workshop Title'}</h5>
+                            <p class="card-text small text-muted description-clamp flex-grow-1">${workshop.Description || 'No description available.'}</p>
+                            <div class="mt-3 small text-muted">
+                                <p class="mb-1"><i class="fas fa-user-tie me-1 text-primary"></i> <strong>Instructor:</strong> ${workshop.Instructor || 'TBA'}</p>
+                                <p class="mb-1"><i class="fas fa-calendar-alt me-1 text-primary"></i> ${workshop.Date ? new Date(workshop.Date).toLocaleDateString() : 'Date TBD'}</p>
+                                <p class="mb-1"><i class="fas fa-clock me-1 text-primary"></i> ${workshop.Time || 'Time TBD'}</p>
+                                <p class="mb-1"><i class="fas fa-map-marker-alt me-1 text-primary"></i> ${workshop.Venue || 'Venue TBA'}</p>
+                                <p class="mb-0"><i class="fas fa-users me-1 text-primary"></i> Capacity: ${workshop.Capacity || 'N/A'}</p>
+                            </div>
+                             <div class="mt-auto pt-3 text-center">
+                                <a href="/workshop-register?id=${workshop.WorkshopID}" class="btn btn-sm btn-primary">Register</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                workshopsGrid.appendChild(workshopCard);
+            });
+
+        } catch (error) {
+            console.error('Error loading workshops:', error);
+             if (loadingPlaceholder) loadingPlaceholder.remove();
+             if(noWorkshopsMessage) noWorkshopsMessage.style.display = 'block'; // Show no results on error too
+            workshopsGrid.innerHTML = '<div class="col-12"><div class="alert alert-danger">Failed to load workshops. Please try again later.</div></div>';
+        }
+    }
+
+    // --- Fetch and Display Speakers ---
+    async function loadSpeakers() {
+        const speakersGrid = document.getElementById('speakersGrid');
+        const loadingPlaceholder = speakersGrid.querySelector('.loading-placeholder');
+        const noSpeakersMessage = document.getElementById('noSpeakersMessage');
+
+        try {
+            const response = await fetch('/workshops/api/speakers'); // Ensure this endpoint exists
+             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const speakers = await response.json();
+
+            if (loadingPlaceholder) loadingPlaceholder.remove();
+
+             if (speakers.length === 0) {
+                 if(noSpeakersMessage) noSpeakersMessage.style.display = 'block';
+                 return;
+            }
+
+            speakersGrid.innerHTML = ''; // Clear grid
+
+            speakers.forEach(speaker => {
+                const speakerCard = document.createElement('div');
+                speakerCard.className = 'col-lg-4 col-md-6';
+                speakerCard.innerHTML = `
+                    <div class="card h-100 shadow-sm speaker-card text-center">
+                         <img src="${speaker.PhotoURL || '/images/default-avatar.png'}" class="card-img-top speaker-image mx-auto mt-3" alt="${speaker.Name}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-semibold mb-1">${speaker.Name || 'Speaker Name'}</h5>
+                            <p class="card-subtitle mb-2 text-primary small">${speaker.Topic || 'Topic TBA'}</p>
+                            <p class="card-text small text-muted bio-clamp flex-grow-1">${speaker.Bio || 'Bio coming soon.'}</p>
+                             <div class="mt-3 small text-muted">
+                                <p class="mb-1"><i class="fas fa-calendar-alt me-1 text-primary"></i> ${speaker.SessionDate ? new Date(speaker.SessionDate).toLocaleDateString() : 'Date TBD'}</p>
+                                <p class="mb-1"><i class="fas fa-clock me-1 text-primary"></i> ${speaker.SessionTime || 'Time TBD'}</p>
+                                <p class="mb-0"><i class="fas fa-map-marker-alt me-1 text-primary"></i> ${speaker.SessionVenue || 'Venue TBA'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                speakersGrid.appendChild(speakerCard);
+            });
+        } catch (error) {
+            console.error('Error loading speakers:', error);
+             if (loadingPlaceholder) loadingPlaceholder.remove();
+             if(noSpeakersMessage) noSpeakersMessage.style.display = 'block';
+            speakersGrid.innerHTML = '<div class="col-12"><div class="alert alert-danger">Failed to load speakers. Please try again later.</div></div>';
+        }
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        loadWorkshops();
+        loadSpeakers();
+    });
+</script>
+
+<style>
+    .workshops-hero {
+        min-height: 50vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/workshops-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+    .overview {
+        background-color: var(--bs-body-bg);
+    }
+     .workshop-card, .speaker-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: var(--card-bg);
+        border: 1px solid var(--bs-border-color);
+    }
+    .workshop-card:hover, .speaker-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+     .workshop-card .card-title, .speaker-card .card-title {
+        color: var(--bs-body-color);
+    }
+     .workshop-card .card-text, .speaker-card .card-text,
+     .workshop-card .small, .speaker-card .small {
+        color: rgba(255, 255, 255, 0.7);
+    }
+     .workshop-card i, .speaker-card i {
+         color: var(--bs-primary);
+     }
+    .description-clamp, .bio-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* Show 3 lines */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 4.5em; /* Adjust based on line-height */
+    }
+    .speaker-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--bs-primary);
+    }
+</style>

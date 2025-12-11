@@ -1,0 +1,158 @@
+<%- include('partials/header', { title: 'Register' }) %>
+
+<div class="overlay" id="overlay"></div>
+<div class="success-popup" id="successPopup">
+    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+    <h2 class="text-success">Registration Successful!</h2>
+    <p class="text-muted">Your account has been created.</p>
+    <p class="text-muted small">Redirecting to login...</p>
+</div>
+
+<div class="container registration-page-container d-flex align-items-center justify-content-center py-5">
+  <div class="col-md-8 col-lg-7 col-xl-6">
+    <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+          <h1 class="h3 mb-3 fw-normal">Create Your NASCON Account</h1>
+          <p class="text-muted">Join the community and access all features</p>
+        </div>
+
+        <div class="alert alert-danger d-none mb-4 small" id="errorAlert" role="alert"></div>
+
+        <form id="registrationForm" class="needs-validation" novalidate>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Your Full Name" required maxlength="50">
+            <label for="name"><i class="fas fa-user me-1"></i> Full Name</label>
+            <div class="invalid-feedback small">Please enter your full name (max 50 characters).</div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required maxlength="50">
+            <label for="email"><i class="fas fa-envelope me-1"></i> Email address</label>
+            <div class="invalid-feedback small">Please enter a valid email address (max 50 characters).</div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required pattern="^[a-zA-Z0-9_-]+$" maxlength="255">
+            <label for="username"><i class="fas fa-at me-1"></i> Username</label>
+            <div class="invalid-feedback small">Username can only contain letters, numbers, underscores, and hyphens.</div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required>
+            <label for="password"><i class="fas fa-lock me-1"></i> Password</label>
+            <div class="form-text small text-muted mt-1">
+              Min 8 chars, incl. uppercase, lowercase, number, symbol.
+            </div>
+            <div class="invalid-feedback small">Password does not meet complexity requirements.</div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="tel" class="form-control" id="contact" name="contact" placeholder="Optional contact number" maxlength="20">
+            <label for="contact"><i class="fas fa-phone me-1"></i> Contact Number (Optional)</label>
+            <div class="invalid-feedback small">Please enter a valid contact number.</div>
+          </div>
+
+          <div class="form-floating mb-4">
+            <select class="form-select" id="roleId" name="roleId" required>
+              <option value="" selected disabled>Select your role...</option>
+              <option value="1">Participant</option>
+              <option value="2">Event Organizer</option>
+              <option value="3">Sponsor</option>
+              <option value="4">Judge</option>
+            </select>
+            <label for="roleId"><i class="fas fa-user-tag me-1"></i> Role</label>
+            <div class="invalid-feedback small">Please select your role.</div>
+          </div>
+
+          <button class="w-100 btn btn-lg btn-primary" type="submit">
+            <i class="fas fa-user-plus me-1"></i> Create Account
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <p class="small text-muted">Already have an account? <a href="/login" class="text-decoration-none fw-medium">Login here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/registration.js"></script>
+
+<style>
+  .registration-page-container {
+     background: linear-gradient(135deg, rgba(var(--bs-secondary-rgb), 0.9), rgba(var(--bs-dark-rgb), 0.9)), url('/images/registration-bg.jpg') center/cover no-repeat;
+     background-color: var(--bs-dark);
+  }
+  .card {
+     background-color: rgba(var(--bs-secondary-rgb), 0.95);
+     backdrop-filter: blur(5px);
+  }
+   .form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(var(--bs-primary-rgb), 0.3);
+    color: var(--bs-body-color);
+  }
+  .form-control:focus, .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--bs-primary);
+    color: var(--bs-body-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  }
+  .form-floating > label {
+      color: rgba(255, 255, 255, 0.7);
+  }
+   .form-floating > .form-control:focus ~ label,
+   .form-floating > .form-control:not(:placeholder-shown) ~ label,
+   .form-floating > .form-select ~ label { /* Adjust label for select */
+      color: var(--bs-primary);
+   }
+   .form-select { /* Ensure select text is visible */
+       color: var(--bs-body-color) !important;
+   }
+   .form-select option { /* Style dropdown options */
+       background-color: var(--bs-secondary);
+       color: var(--bs-body-color);
+   }
+
+  /* Success Popup Styles */
+  .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1040;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+  }
+  .overlay.show {
+      display: block;
+      opacity: 1;
+  }
+  .success-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1050;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      width: 90%;
+      max-width: 400px;
+  }
+  .success-popup.show {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+  }
+</style>
+
+<%- include('partials/footer') %>

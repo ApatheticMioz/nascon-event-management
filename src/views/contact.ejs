@@ -1,0 +1,210 @@
+<%- include('partials/header', { title: 'Contact Us', pageCss: 'contact' }) %>
+
+<section class="contact-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container">
+    <h1 class="display-4 fw-bold mb-3">Contact & Support</h1>
+    <p class="lead mb-0">Get in touch with us for any questions or assistance</p>
+  </div>
+</section>
+
+<section class="contact-section py-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <div class="contact-form-container card shadow-sm border-0 p-4 p-md-5">
+          <h2 class="mb-4 text-primary"><i class="fas fa-paper-plane me-2"></i>Send us a Message</h2>
+          <form id="contactForm" novalidate>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="name" name="name" placeholder="Your Full Name" required>
+              <label for="name"><i class="fas fa-user me-1"></i> Full Name</label>
+              <div class="invalid-feedback small">Please enter your name.</div>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+              <label for="email"><i class="fas fa-envelope me-1"></i> Email Address</label>
+              <div class="invalid-feedback small">Please enter a valid email address.</div>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject of your message" required>
+              <label for="subject"><i class="fas fa-heading me-1"></i> Subject</label>
+              <div class="invalid-feedback small">Please enter a subject.</div>
+            </div>
+            <div class="form-floating mb-4">
+              <textarea class="form-control" placeholder="Leave a message here" id="message" name="message" style="height: 150px" required></textarea>
+              <label for="message"><i class="fas fa-comment-dots me-1"></i> Message</label>
+              <div class="invalid-feedback small">Please enter your message.</div>
+            </div>
+            <div class="alert d-none mb-4 small" id="formFeedback" role="alert"></div>
+            <button type="submit" class="btn btn-primary btn-lg w-100" id="submitButton">
+              Send Message <i class="fas fa-paper-plane ms-1"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="info-card card shadow-sm border-0 p-4 mb-4">
+          <h3 class="mb-3 text-primary"><i class="fas fa-info-circle me-2"></i>Contact Information</h3>
+          <ul class="list-unstyled">
+            <li class="d-flex align-items-start mb-3">
+              <i class="fas fa-map-marker-alt mt-1 me-3 text-primary fa-fw"></i>
+              <div>
+                <strong class="d-block">Address</strong>
+                <span class="text-muted small">FAST-NUCES, H-11/4, A-K Brohi Road, Islamabad</span>
+              </div>
+            </li>
+            <li class="d-flex align-items-start mb-3">
+              <i class="fas fa-phone mt-1 me-3 text-primary fa-fw"></i>
+              <div>
+                <strong class="d-block">Phone</strong>
+                <a href="tel:+92511234567" class="text-muted small text-decoration-none footer-link">+92 51 1234567</a>
+              </div>
+            </li>
+            <li class="d-flex align-items-start mb-3">
+              <i class="fas fa-envelope mt-1 me-3 text-primary fa-fw"></i>
+              <div>
+                <strong class="d-block">Email</strong>
+                <a href="mailto:info@nascon.com" class="text-muted small text-decoration-none footer-link">info@nascon.com</a>
+              </div>
+            </li>
+            <li class="d-flex align-items-start mb-0">
+              <i class="fas fa-clock mt-1 me-3 text-primary fa-fw"></i>
+              <div>
+                <strong class="d-block">Office Hours</strong>
+                <span class="text-muted small">Monday - Friday: 9:00 AM - 5:00 PM</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="faq-section card shadow-sm border-0 p-4">
+           <h3 class="mb-3 text-primary"><i class="fas fa-question-circle me-2"></i>Quick FAQs</h3>
+           <div class="list-group list-group-flush">
+               <a href="/faq/registration" class="list-group-item list-group-item-action bg-transparent border-secondary text-light d-flex justify-content-between align-items-center faq-link">
+                   Registration Process <i class="fas fa-chevron-right small"></i>
+               </a>
+               <a href="/faq/fees" class="list-group-item list-group-item-action bg-transparent border-secondary text-light d-flex justify-content-between align-items-center faq-link">
+                   Fees & Payments <i class="fas fa-chevron-right small"></i>
+               </a>
+               <a href="/faq/refund" class="list-group-item list-group-item-action bg-transparent border-secondary text-light d-flex justify-content-between align-items-center faq-link">
+                   Refund Policy <i class="fas fa-chevron-right small"></i>
+               </a>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+  // Bootstrap form validation
+  (() => {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+  })()
+
+  // Contact form submission handling
+  document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const feedbackDiv = document.getElementById('formFeedback');
+      const submitButton = document.getElementById('submitButton');
+
+      // Reset feedback
+      feedbackDiv.classList.add('d-none');
+      feedbackDiv.classList.remove('alert-success', 'alert-danger');
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+
+      if (!form.checkValidity()) {
+          form.classList.add('was-validated');
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Send Message <i class="fas fa-paper-plane ms-1"></i>';
+          return;
+      }
+
+      const formData = {
+          name: form.name.value,
+          email: form.email.value,
+          subject: form.subject.value,
+          message: form.message.value
+      };
+
+      try {
+          const response = await fetch('/contact/api/inquiries', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+              feedbackDiv.textContent = data.message || 'Message sent successfully!';
+              feedbackDiv.classList.remove('d-none', 'alert-danger');
+              feedbackDiv.classList.add('alert-success');
+              form.reset();
+              form.classList.remove('was-validated');
+          } else {
+              throw new Error(data.details || data.error || 'Failed to send message');
+          }
+      } catch (error) {
+          feedbackDiv.textContent = error.message;
+          feedbackDiv.classList.remove('d-none', 'alert-success');
+          feedbackDiv.classList.add('alert-danger');
+      } finally {
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Send Message <i class="fas fa-paper-plane ms-1"></i>';
+      }
+  });
+</script>
+
+<style>
+    .contact-hero {
+        min-height: 40vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/contact-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+    .contact-form-container, .info-card, .faq-section {
+        background-color: var(--card-bg);
+        border: 1px solid var(--bs-border-color);
+    }
+    .form-control, .form-select {
+        background-color: var(--input-bg);
+        color: var(--bs-body-color);
+        border-color: var(--bs-border-color);
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: var(--input-bg);
+        color: var(--bs-body-color);
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+     .form-floating > label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: var(--bs-primary);
+    }
+    .faq-link {
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .faq-link:hover {
+        background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+        color: var(--bs-primary) !important;
+    }
+</style>

@@ -1,0 +1,107 @@
+<% /*
+<!-- Notification Bar -->
+<div class="notification-bar">
+    <div class="container">
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="notification-text">
+                <p><strong>NASCON 2025 (Islamabad)</strong> Registration is now open! <a href="/events" class="notification-link">Register Now</a></p>
+            </div>
+            <button class="notification-close" onclick="closeNotification()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.notification-bar {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    padding: 12px 0;
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.notification-icon {
+    font-size: 1.2rem;
+    animation: pulse 2s infinite;
+}
+
+.notification-text {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.notification-text p {
+    margin: 0;
+}
+
+.notification-link {
+    color: white;
+    text-decoration: underline;
+    font-weight: 500;
+    margin-left: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.notification-link:hover {
+    opacity: 0.8;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    .notification-content {
+        flex-direction: row;
+        text-align: center;
+        padding: 0 15px;
+    }
+    
+    .notification-text {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<script>
+function closeNotification() {
+    document.querySelector('.notification-bar').style.display = 'none';
+}
+</script>
+*/ %> 

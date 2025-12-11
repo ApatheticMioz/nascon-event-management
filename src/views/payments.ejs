@@ -1,0 +1,389 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+    <h1 class="mb-4">Payments & Finance Management</h1>
+
+    <!-- Payment Forms Section -->
+    <div class="row mb-5">
+        <!-- Registration Payment Form -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Registration Payment</h3>
+                </div>
+                <div class="card-body">
+                    <form id="registrationPaymentForm">
+                        <div class="mb-3">
+                            <label for="eventId" class="form-label">Event</label>
+                            <select class="form-select" id="eventId" required>
+                                <option value="">Select Event</option>
+                                <!-- Events will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="debit_card">Debit Card</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Process Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sponsorship Payment Form -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Sponsorship Payment</h3>
+                </div>
+                <div class="card-body">
+                    <form id="sponsorshipPaymentForm">
+                        <div class="mb-3">
+                            <label for="sponsorId" class="form-label">Sponsor</label>
+                            <select class="form-select" id="sponsorId" required>
+                                <option value="">Select Sponsor</option>
+                                <!-- Sponsors will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sponsorshipAmount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="sponsorshipAmount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sponsorshipPaymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select" id="sponsorshipPaymentMethod" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="check">Check</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Record Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Reports Section -->
+    <div class="row">
+        <!-- Registration Revenue Report -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Registration Revenue Report</h3>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshRegistrationReport()">Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="registrationReportTable">
+                            <thead>
+                                <tr>
+                                    <th>Event Name</th>
+                                    <th>Total Payments</th>
+                                    <th>Total Revenue</th>
+                                    <th>Unique Participants</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Report data will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sponsorship Revenue Report -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Sponsorship Revenue Report</h3>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshSponsorshipReport()">Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="sponsorshipReportTable">
+                            <thead>
+                                <tr>
+                                    <th>Sponsor Name</th>
+                                    <th>Tier</th>
+                                    <th>Total Payments</th>
+                                    <th>Total Amount</th>
+                                    <th>Last Payment Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Report data will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accommodation Revenue Report -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Accommodation Revenue Report</h3>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshAccommodationReport()">Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="accommodationReportTable">
+                            <thead>
+                                <tr>
+                                    <th>Accommodation Name</th>
+                                    <th>Total Requests</th>
+                                    <th>Total Revenue</th>
+                                    <th>Average Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Report data will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (user && user.privileges && user.privileges.Payments && user.privileges.Payments.create) { %>
+  <a href="/payments/add" class="btn btn-primary">Add Payment</a>
+<% } %>
+
+<% payments.forEach(function(payment) { %>
+  <div class="payment-card">
+    <h3>Payment #<%= payment.PaymentID %></h3>
+    <p>Amount: <%= payment.Amount %></p>
+    <p>Status: <%= payment.Status %></p>
+    <% if (user && user.privileges && user.privileges.Payments) { %>
+      <% if (user.privileges.Payments.update) { %>
+        <a href="/payments/<%= payment.PaymentID %>/edit" class="btn btn-secondary">Edit</a>
+      <% } %>
+      <% if (user.privileges.Payments.delete) { %>
+        <form action="/payments/<%= payment.PaymentID %>?_method=DELETE" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      <% } %>
+    <% } %>
+  </div>
+<% }); %>
+
+<script>
+// Function to load events into the registration payment form
+async function loadEvents() {
+    try {
+        const response = await fetch('/api/payments/events');
+        const events = await response.json();
+        const eventSelect = document.getElementById('eventId');
+        eventSelect.innerHTML = '<option value="">Select Event</option>';
+        events.forEach(event => {
+            const option = document.createElement('option');
+            option.value = event.EventID;
+            option.textContent = `${event.Name} - ${new Date(event.Date).toLocaleDateString()} (Fee: Rs. ${event.Fee})`;
+            option.dataset.fee = event.Fee;
+            eventSelect.appendChild(option);
+        });
+
+        // Update amount when event is selected
+        eventSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.dataset.fee) {
+                document.getElementById('amount').value = selectedOption.dataset.fee;
+            }
+        });
+    } catch (error) {
+        console.error('Error loading events:', error);
+        alert('Error loading events. Please try again.');
+    }
+}
+
+// Function to load sponsors into the sponsorship payment form
+async function loadSponsors() {
+    try {
+        const response = await fetch('/api/payments/sponsors');
+        const sponsors = await response.json();
+        const sponsorSelect = document.getElementById('sponsorId');
+        sponsorSelect.innerHTML = '<option value="">Select Sponsor</option>';
+        sponsors.forEach(sponsor => {
+            const option = document.createElement('option');
+            option.value = sponsor.SponsorID;
+            option.textContent = `${sponsor.Name} (${sponsor.SponsorshipLevel})`;
+            sponsorSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading sponsors:', error);
+        alert('Error loading sponsors. Please try again.');
+    }
+}
+
+// Function to refresh registration revenue report
+async function refreshRegistrationReport() {
+    try {
+        const response = await fetch('/api/payments/reports/registration');
+        const report = await response.json();
+        const tbody = document.querySelector('#registrationReportTable tbody');
+        tbody.innerHTML = '';
+        if (report.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No registration payments found</td></tr>';
+            return;
+        }
+        report.forEach(row => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${row.EventName || 'N/A'}</td>
+                    <td>${row.TotalPayments || 0}</td>
+                    <td>Rs. ${(row.TotalRevenue || 0).toFixed(2)}</td>
+                    <td>${row.UniqueParticipants || 0}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error('Error refreshing registration report:', error);
+        alert('Error loading registration report. Please try again.');
+    }
+}
+
+// Function to refresh sponsorship revenue report
+async function refreshSponsorshipReport() {
+    try {
+        const response = await fetch('/api/payments/reports/sponsorship');
+        const report = await response.json();
+        const tbody = document.querySelector('#sponsorshipReportTable tbody');
+        tbody.innerHTML = '';
+        if (report.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No sponsorship payments found</td></tr>';
+            return;
+        }
+        report.forEach(row => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${row.SponsorName || 'N/A'}</td>
+                    <td>${row.SponsorshipTier || 'N/A'}</td>
+                    <td>${row.TotalPayments || 0}</td>
+                    <td>Rs. ${(row.TotalAmount || 0).toFixed(2)}</td>
+                    <td>${row.LastPaymentDate ? new Date(row.LastPaymentDate).toLocaleDateString() : 'N/A'}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error('Error refreshing sponsorship report:', error);
+        alert('Error loading sponsorship report. Please try again.');
+    }
+}
+
+// Function to refresh accommodation revenue report
+async function refreshAccommodationReport() {
+    try {
+        const response = await fetch('/api/payments/reports/accommodation');
+        const report = await response.json();
+        const tbody = document.querySelector('#accommodationReportTable tbody');
+        tbody.innerHTML = '';
+        if (report.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No accommodation revenue data found</td></tr>';
+            return;
+        }
+        report.forEach(row => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${row.AccommodationName || 'N/A'}</td>
+                    <td>${row.TotalRequests || 0}</td>
+                    <td>Rs. ${(row.TotalRevenue || 0).toFixed(2)}</td>
+                    <td>Rs. ${(row.AverageRevenue || 0).toFixed(2)}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error('Error refreshing accommodation report:', error);
+        alert('Error loading accommodation report. Please try again.');
+    }
+}
+
+// Handle registration payment form submission
+document.getElementById('registrationPaymentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch('/api/payments/registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                participantId: '<%= user?.UserID %>', // Using UserID instead of ParticipantID
+                eventId: document.getElementById('eventId').value,
+                amount: document.getElementById('amount').value,
+                paymentMethod: document.getElementById('paymentMethod').value
+            })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert('Payment processed successfully');
+            document.getElementById('registrationPaymentForm').reset();
+            refreshRegistrationReport();
+        } else {
+            alert(result.error || 'Error processing payment');
+        }
+    } catch (error) {
+        console.error('Error submitting payment:', error);
+        alert('Error processing payment. Please try again.');
+    }
+});
+
+// Handle sponsorship payment form submission
+document.getElementById('sponsorshipPaymentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch('/api/payments/sponsorship', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sponsorId: document.getElementById('sponsorId').value,
+                amount: document.getElementById('sponsorshipAmount').value,
+                paymentMethod: document.getElementById('sponsorshipPaymentMethod').value,
+                description: document.getElementById('description').value
+            })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert('Sponsorship payment recorded successfully');
+            document.getElementById('sponsorshipPaymentForm').reset();
+            refreshSponsorshipReport();
+        } else {
+            alert(result.error || 'Error recording payment');
+        }
+    } catch (error) {
+        console.error('Error submitting sponsorship payment:', error);
+        alert('Error recording payment. Please try again.');
+    }
+});
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    loadEvents();
+    loadSponsors();
+    refreshRegistrationReport();
+    refreshSponsorshipReport();
+    refreshAccommodationReport();
+});
+</script>
+
+<%- include('partials/footer') %>

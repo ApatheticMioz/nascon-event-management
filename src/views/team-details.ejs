@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .team-details {
+            padding: 40px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .team-header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .team-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .team-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .members-section,
+        .team-info-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .member-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .member-item:last-child {
+            border-bottom: none;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .member-details h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .member-details p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .member-role {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .role-leader {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .member-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .member-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background: #c82333;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .info-item h4 {
+            margin: 0 0 5px 0;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .add-member-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn-add-member {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-add-member:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .team-content {
+                grid-template-columns: 1fr;
+            }
+
+            .team-header h1 {
+                font-size: 2rem;
+            }
+
+            .team-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="team-details">
+        <div class="container">
+            <div class="team-header">
+                <h1><%= team.TeamName %></h1>
+                <div class="team-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <%= team.EventName %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        Leader: <%= team.LeaderName %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        Created: <%= new Date(team.CreatedAt).toLocaleDateString() %>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-circle"></i>
+                        Status: <%= team.Status.charAt(0).toUpperCase() + team.Status.slice(1) %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-content">
+                <div class="members-section">
+                    <div class="section-title">
+                        Team Members
+                        <% if (user && user.id === team.LeaderID) { %>
+                            <button class="btn-add-member" onclick="showAddMemberForm()">
+                                <i class="fas fa-plus"></i> Add Member
+                            </button>
+                        <% } %>
+                    </div>
+
+                    <ul class="member-list">
+                        <% members.forEach(member => { %>
+                            <li class="member-item">
+                                <div class="member-info">
+                                    <div class="member-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="member-details">
+                                        <h3><%= member.Name %></h3>
+                                        <p><%= member.Email %></p>
+                                    </div>
+                                </div>
+                                <div class="member-status">
+                                    <span class="member-role <%= member.Role === 'Leader' ? 'role-leader' : '' %>">
+                                        <%= member.Role %>
+                                    </span>
+                                    <% if (user && user.id === team.LeaderID && member.Role !== 'Leader') { %>
+                                        <div class="member-actions">
+                                            <button class="btn-remove" onclick="removeMember('<%= member.UserID %>')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </li>
+                        <% }); %>
+                    </ul>
+
+                    <div class="add-member-form" id="addMemberForm" style="display: none;">
+                        <h3>Add New Member</h3>
+                        <form onsubmit="addMember(event)">
+                            <div class="form-group">
+                                <label for="memberEmail">Member Email</label>
+                                <input type="email" id="memberEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="memberRole">Role</label>
+                                <select id="memberRole" required>
+                                    <option value="Member">Member</option>
+                                    <option value="Co-Leader">Co-Leader</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-add-member">Add Member</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="team-info-section">
+                    <div class="section-title">Team Information</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>Event</h4>
+                            <p><%= team.EventName %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Leader</h4>
+                            <p><%= team.LeaderName %></p>
+                            <small><%= team.LeaderEmail %></small>
+                        </div>
+                        <div class="info-item">
+                            <h4>Status</h4>
+                            <p><%= team.Status.charAt(0).toUpperCase() + team.Status.slice(1) %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Created</h4>
+                            <p><%= new Date(team.CreatedAt).toLocaleDateString() %></p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Last Updated</h4>
+                            <p><%= new Date(team.UpdatedAt).toLocaleDateString() %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        function showAddMemberForm() {
+            const form = document.getElementById('addMemberForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function addMember(event) {
+            event.preventDefault();
+            const email = document.getElementById('memberEmail').value;
+            const role = document.getElementById('memberRole').value;
+
+            try {
+                // First, get user ID from email
+                const userResponse = await fetch(`/auth/users/${email}`);
+                const userData = await userResponse.json();
+
+                if (!userData || !userData.UserID) {
+                    alert('User not found with this email');
+                    return;
+                }
+
+                // Add member to team
+                const response = await fetch(`/teams/<%= team.TeamID %>/members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userData.UserID,
+                        role: role
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert(result.error || 'Failed to add member');
+                }
+            } catch (error) {
+                console.error('Error adding member:', error);
+                alert('Failed to add member');
+            }
+        }
+
+        async function removeMember(userId) {
+            if (!confirm('Are you sure you want to remove this member?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/teams/<%= team.TeamID %>/members/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const result = await response.json();
+                    alert(result.error || 'Failed to remove member');
+                }
+            } catch (error) {
+                console.error('Error removing member:', error);
+                alert('Failed to remove member');
+            }
+        }
+    </script>
+</body>
+</html> 

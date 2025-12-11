@@ -1,0 +1,162 @@
+/* public/css/custom.css */
+
+/* Define theme colors using CSS variables */
+:root {
+    --bs-primary: #FFD700; /* Gold */
+    --bs-primary-rgb: 255, 215, 0;
+    --bs-secondary: #181818; /* Royal Black */
+    --bs-secondary-rgb: 24, 24, 24;
+    --bs-dark: #111; /* Deep Black */
+    --bs-light: #f8f9fa; /* Standard light grey */
+    --bs-body-color: #fff; /* White text */
+    --bs-body-bg: #111; /* Deep Black background */
+    --bs-link-color: #FFD700; /* Gold links */
+    --bs-link-hover-color: #C9B037; /* Darker Gold hover */
+    --bs-border-color: #444; /* Darker border for dark theme */
+    --card-bg: #181818; /* Royal Black for cards */
+    --input-bg: #222; /* Slightly lighter black for inputs */
+}
+
+/* Apply base styles */
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: 'Poppins', sans-serif; /* Ensure Poppins is applied */
+}
+
+/* Override Bootstrap default link colors */
+a {
+    color: var(--bs-link-color);
+    text-decoration: none; /* Optional: remove underline */
+}
+
+a:hover {
+    color: var(--bs-link-hover-color);
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: var(--bs-secondary) !important; /* Ensure override */
+    border-bottom: 2px solid var(--bs-primary);
+}
+
+.navbar-brand {
+    color: var(--bs-primary) !important;
+    font-weight: 600;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8); /* Lighter text for nav links */
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--bs-primary) !important;
+}
+
+.navbar-dark .navbar-toggler {
+    border-color: rgba(255, 215, 0, 0.5); /* Gold border for toggler */
+}
+
+.navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 215, 0, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-secondary); /* Black text on gold button */
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--bs-link-hover-color);
+    border-color: var(--bs-link-hover-color);
+    color: var(--bs-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-primary {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--bs-primary);
+    color: var(--bs-secondary);
+    border-color: var(--bs-primary);
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Bootstrap default secondary */
+    border-color: #6c757d;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    transform: translateY(-2px);
+}
+
+/* Card styling */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
+    margin-bottom: 1.5rem; /* Add consistent spacing */
+}
+
+.card-header {
+    background-color: rgba(255, 255, 255, 0.05); /* Slightly lighter header */
+    border-bottom: 1px solid var(--bs-border-color);
+    color: var(--bs-primary);
+}
+
+.card-title {
+    color: var(--bs-primary);
+}
+
+/* Form styling */
+.form-control, .form-select {
+    background-color: var(--input-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--input-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.form-label {
+    color: var(--bs-body-color);
+    opacity: 0.9;
+}
+
+/* Footer link styling */
+.footer-link {
+    transition: color 0.3s ease;
+}
+.footer-link:hover {
+    color: var(--bs-primary) !important; /* Ensure hover color */
+}
+
+.social-link {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+.social-link:hover {
+    color: var(--bs-primary) !important;
+    transform: translateY(-2px);
+}
+
+/* Add more custom styles as needed */

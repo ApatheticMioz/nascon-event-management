@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/faq.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="faq-page">
+        <div class="container">
+            <div class="faq-content">
+                <h1>Registration Fees</h1>
+                
+                <section class="faq-section">
+                    <h2>Fee Structure</h2>
+                    <div class="fee-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Event Type</th>
+                                    <th>Early Bird</th>
+                                    <th>Regular</th>
+                                    <th>On-Site</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Technical Competitions</td>
+                                    <td>PKR 1,000</td>
+                                    <td>PKR 1,500</td>
+                                    <td>PKR 2,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Workshops</td>
+                                    <td>PKR 2,000</td>
+                                    <td>PKR 2,500</td>
+                                    <td>PKR 3,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Conference Pass</td>
+                                    <td>PKR 3,000</td>
+                                    <td>PKR 4,000</td>
+                                    <td>PKR 5,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Payment Methods</h2>
+                    <ul>
+                        <li>Online Payment (Credit/Debit Card)</li>
+                        <li>Bank Transfer</li>
+                        <li>EasyPaisa/JazzCash</li>
+                        <li>On-site Payment (Cash)</li>
+                    </ul>
+                </section>
+
+                <section class="faq-section">
+                    <h2>What's Included</h2>
+                    <ul>
+                        <li>Event Participation</li>
+                        <li>Workshop Materials</li>
+                        <li>Lunch & Refreshments</li>
+                        <li>Event T-shirt</li>
+                        <li>Certificate of Participation</li>
+                    </ul>
+                </section>
+
+                <section class="faq-section">
+                    <h2>Need Help?</h2>
+                    <p>For any queries regarding fees and payments, contact our finance team:</p>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> finance@nascon.com</li>
+                        <li><i class="fas fa-phone"></i> +92-51-1234567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> FAST-NUCES, H-11/4, A-K Brohi Road, Islamabad</li>
+                        <li><i class="fas fa-clock"></i> Monday - Friday: 9:00 AM - 5:00 PM</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html> 

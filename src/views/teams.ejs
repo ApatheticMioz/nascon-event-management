@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .teams-page {
+            padding: 40px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .teams-header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .teams-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .teams-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .team-event {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .team-content {
+            padding: 20px;
+        }
+
+        .team-info {
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .info-item i {
+            color: #4a90e2;
+            width: 20px;
+        }
+
+        .team-members {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .member-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .member-avatars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .member-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .team-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.875rem;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+        .status-disqualified { background: #e2e3e5; color: #383d41; }
+
+        .team-actions a {
+            color: #4a90e2;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .create-team-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #4a90e2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .create-team-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .teams-header h1 {
+                font-size: 2rem;
+            }
+
+            .filter-group {
+                flex-direction: column;
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="teams-page">
+        <div class="container">
+            <div class="teams-header">
+                <h1>Teams</h1>
+                <p>View and manage your teams</p>
+            </div>
+
+            <div class="teams-filters">
+                <div class="filter-group">
+                    <input type="text" id="searchTeams" placeholder="Search teams...">
+                    <select id="eventFilter">
+                        <option value="">All Events</option>
+                        <% let events = [...new Set(teams.map(t => t.EventName))]; %>
+                        <% events.forEach(event => { %>
+                            <option value="<%= event %>"><%= event %></option>
+                        <% }); %>
+                    </select>
+                    <select id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="disqualified">Disqualified</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="teams-grid">
+                <% if (teams && teams.length > 0) { %>
+                    <% teams.forEach(team => { %>
+                        <div class="team-card" 
+                             data-event="<%= team.EventName %>"
+                             data-status="<%= team.Status %>">
+                            <div class="team-header">
+                                <h3 class="team-name"><%= team.TeamName %></h3>
+                                <div class="team-event">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <%= team.EventName %>
+                                </div>
+                            </div>
+                            <div class="team-content">
+                                <div class="team-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-user"></i>
+                                        Leader: <%= team.LeaderName %>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-users"></i>
+                                        Members: <%= team.MemberCount %>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-clock"></i>
+                                        Created: <%= new Date(team.CreatedAt).toLocaleDateString() %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="team-footer">
+                                <span class="team-status status-<%= team.Status %>">
+                                    <%= team.Status.charAt(0).toUpperCase() + team.Status.slice(1) %>
+                                </span>
+                                <div class="team-actions">
+                                    <a href="/teams/<%= team.TeamID %>" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <% if (user && user.privileges && user.privileges.Teams) { %>
+                                        <% if (user.privileges.Teams.update) { %>
+                                            <a href="/teams/<%= team.TeamID %>/edit" title="Edit Team">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <% if (user.privileges.Teams.update) { %>
+                                                <a href="/teams/<%= team.TeamID %>/add-member" title="Add Member">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            <% } %>
+                                        <% } %>
+                                        <% if (user.privileges && user.privileges.Teams.delete) { %>
+                                            <form action="/teams/<%= team.TeamID %>?_method=DELETE" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger" title="Delete Team">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-teams-message">
+                        <i class="fas fa-users fa-3x"></i>
+                        <h3>No Teams Found</h3>
+                        <p>There are currently no teams to display.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <% if (user && user.privileges && user.privileges.Teams && user.privileges.Teams.create) { %>
+                <a href="/teams/new" class="btn btn-primary">Create Team</a>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        // Filter functionality
+        function filterTeams() {
+            const search = document.getElementById('searchTeams').value.toLowerCase();
+            const event = document.getElementById('eventFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            document.querySelectorAll('.team-card').forEach(card => {
+                const matchesSearch = card.textContent.toLowerCase().includes(search);
+                const matchesEvent = !event || card.dataset.event === event;
+                const matchesStatus = !status || card.dataset.status === status;
+
+                card.style.display = matchesSearch && matchesEvent && matchesStatus ? '' : 'none';
+            });
+
+            // Show/hide no teams message
+            const visibleTeams = document.querySelectorAll('.team-card[style=""]').length;
+            const noTeamsMessage = document.querySelector('.no-teams-message');
+            if (noTeamsMessage) {
+                noTeamsMessage.style.display = visibleTeams === 0 ? 'block' : 'none';
+            }
+        }
+
+        // Add event listeners to filters
+        document.getElementById('searchTeams').addEventListener('input', filterTeams);
+        document.getElementById('eventFilter').addEventListener('change', filterTeams);
+        document.getElementById('statusFilter').addEventListener('change', filterTeams);
+
+        // Initialize filters
+        document.addEventListener('DOMContentLoaded', filterTeams);
+    </script>
+</body>
+</html> 

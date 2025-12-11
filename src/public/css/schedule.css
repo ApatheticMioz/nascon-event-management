@@ -1,0 +1,88 @@
+/* public/css/schedule.css */
+
+/* Keep specific styles, remove Bootstrap overlaps */
+
+.schedule-hero {
+    min-height: 50vh;
+    background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/schedule-hero.jpg') center/cover no-repeat;
+    margin-top: -70px; /* Offset navbar */
+    padding-top: 70px;
+}
+
+.schedule-hero h1 {
+    color: var(--bs-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.schedule-section {
+    background-color: var(--bs-body-bg);
+}
+
+.schedule-filters .card {
+     background-color: var(--card-bg);
+     border-color: var(--bs-border-color);
+}
+.schedule-filters .form-control, .schedule-filters .form-select {
+    background-color: var(--input-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+.schedule-filters .form-control:focus, .schedule-filters .form-select:focus {
+     border-color: var(--bs-primary);
+     box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+.schedule-filters .input-group-text {
+     background-color: var(--input-bg);
+     border-color: var(--bs-border-color);
+}
+.filter-buttons .btn-outline-primary {
+     color: var(--bs-primary);
+     border-color: var(--bs-primary);
+     transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition */
+}
+.filter-buttons .btn-outline-primary:hover,
+.filter-buttons .btn-outline-primary.active {
+     background-color: var(--bs-primary);
+     color: var(--bs-secondary); /* Black text on gold */
+     border-color: var(--bs-primary);
+}
+
+.schedule-timeline .day-header h2 {
+    color: var(--bs-primary);
+    border-bottom-color: var(--bs-border-color); /* Use theme border color */
+}
+
+.schedule-event-item {
+     transition: background-color 0.2s ease, border-color 0.2s ease;
+     border-color: var(--bs-border-color) !important; /* Override Bootstrap */
+     background-color: var(--card-bg) !important; /* Ensure dark background */
+     color: var(--bs-body-color) !important; /* Ensure text is visible */
+}
+.schedule-event-item:hover {
+     background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+     border-color: rgba(var(--bs-primary-rgb), 0.3) !important;
+}
+.schedule-event-item h5 {
+     color: var(--bs-body-color); /* Make title visible */
+}
+.schedule-event-item .text-muted {
+     color: rgba(255, 255, 255, 0.7) !important; /* Lighter muted text */
+}
+.schedule-event-item .text-primary {
+     color: var(--bs-primary) !important; /* Ensure primary color */
+}
+.schedule-event-item .badge {
+     background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+     color: var(--bs-primary) !important;
+}
+
+.no-events, .no-results {
+    background-color: var(--card-bg);
+    border: 1px dashed var(--bs-border-color);
+    color: rgba(255, 255, 255, 0.6);
+}
+.no-events i, .no-results i {
+     color: rgba(255, 255, 255, 0.4);
+}
+
+/* Remove general container padding, grid styles, card styles, button styles if handled by Bootstrap/custom.css */

@@ -1,0 +1,201 @@
+<%- include('partials/header', { title: 'Event Schedule', pageCss: 'schedule' }) %>
+
+<section class="schedule-hero text-white text-center d-flex align-items-center justify-content-center">
+  <div class="container hero-content">
+    <h1 class="display-4 fw-bold mb-3">Event Schedule</h1>
+    <p class="lead mb-0">Plan your NASCON 2025 (Islamabad) experience</p>
+  </div>
+</section>
+
+<section class="schedule-section py-5">
+  <div class="container">
+    <div class="schedule-filters card shadow-sm mb-4">
+       <div class="card-body">
+         <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <label for="scheduleSearch" class="form-label visually-hidden">Search</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-primary"></i></span>
+                    <input type="text" class="form-control border-start-0" id="scheduleSearch" placeholder="Search events...">
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div class="btn-group filter-buttons" role="group" aria-label="Filter by category">
+                    <button type="button" class="btn btn-outline-primary active" data-category="all">All Events</button>
+                    <button type="button" class="btn btn-outline-primary" data-category="Competition">Competitions</button>
+                    <button type="button" class="btn btn-outline-primary" data-category="Workshop">Workshops</button>
+                    <button type="button" class="btn btn-outline-primary" data-category="Social">Social</button>
+                    </div>
+            </div>
+         </div>
+       </div>
+    </div>
+
+    <div class="schedule-timeline">
+      <% if (typeof schedule === 'undefined' || Object.keys(schedule).length === 0) { %>
+        <div class="no-events alert alert-secondary text-center">
+          <i class="fas fa-calendar-times fa-3x mb-3"></i>
+          <p class="mb-0">No events scheduled yet. Please check back later.</p>
+        </div>
+      <% } else { %>
+        <%
+          // Sort dates chronologically
+          const sortedDates = Object.keys(schedule).sort((a, b) => new Date(a) - new Date(b));
+        %>
+        <% sortedDates.forEach(date => { %>
+          <% const formattedDate = new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); %>
+          <div class="schedule-day mb-5">
+            <div class="day-header mb-3">
+              <h2 class="fw-bold fs-4 text-primary border-bottom border-secondary pb-2 d-inline-block"><%= formattedDate %></h2>
+            </div>
+            <div class="day-events list-group">
+              <% schedule[date].sort((a,b) => (a.Time || "00:00").localeCompare(b.Time || "00:00")).forEach(event => { %>
+                <a href="/events/<%= event.EventID %>" class="list-group-item list-group-item-action schedule-event-item bg-transparent border-secondary text-light" data-category="<%= event.CategoryName || 'Other' %>">
+                  <div class="row align-items-center">
+                      <div class="col-md-2 text-md-center mb-2 mb-md-0">
+                          <strong class="text-primary"><i class="far fa-clock me-2"></i><%= event.Time ? new Date('1970-01-01T' + event.Time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : 'Time TBD' %></strong>
+                      </div>
+                      <div class="col-md-7">
+                          <h5 class="mb-1 event-name"><%= event.EventName %></h5>
+                          <% if (event.VenueName) { %>
+                              <small class="text-muted d-block"><i class="fas fa-map-marker-alt me-1"></i> <%= event.VenueName %> <%= event.Location ? `- ${event.Location}` : '' %></small>
+                          <% } %>
+                           <% if (event.EventDescription) { %>
+                             <p class="small text-muted mt-1 event-description d-none d-md-block"><%= event.EventDescription.substring(0, 100) %>...</p>
+                           <% } %>
+                      </div>
+                      <div class="col-md-3 text-md-end">
+                           <span class="badge rounded-pill bg-light text-dark me-2"><%= event.CategoryName || 'General' %></span>
+                           <i class="fas fa-chevron-right text-primary d-none d-md-inline-block"></i>
+                      </div>
+                  </div>
+                </a>
+              <% }); %>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <div id="noResults" class="no-results text-center py-5" style="display: none;">
+      <i class="fas fa-search fa-3x text-muted mb-3"></i>
+      <p class="text-muted">No events found matching your search or filter criteria.</p>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('scheduleSearch');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const eventItems = document.querySelectorAll('.schedule-event-item');
+        const noResults = document.getElementById('noResults');
+        const scheduleDays = document.querySelectorAll('.schedule-day');
+
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeCategoryButton = document.querySelector('.filter-btn.active');
+            const activeCategory = activeCategoryButton ? activeCategoryButton.dataset.category : 'all';
+            let totalVisibleEvents = 0;
+
+            scheduleDays.forEach(day => {
+                let visibleEventsInDay = 0;
+                const eventsInThisDay = day.querySelectorAll('.schedule-event-item');
+
+                eventsInThisDay.forEach(item => {
+                    const eventName = item.querySelector('.event-name')?.textContent.toLowerCase() || '';
+                    const eventDescription = item.querySelector('.event-description')?.textContent.toLowerCase() || '';
+                    const eventCategory = item.dataset.category || 'Other'; // Default if category is missing
+
+                    const matchesSearch = eventName.includes(searchTerm) || eventDescription.includes(searchTerm);
+                    const matchesCategory = activeCategory === 'all' || eventCategory === activeCategory;
+
+                    if (matchesSearch && matchesCategory) {
+                        item.style.display = ''; // Show item
+                        visibleEventsInDay++;
+                        totalVisibleEvents++;
+                    } else {
+                        item.style.display = 'none'; // Hide item
+                    }
+                });
+
+                // Hide the entire day if no events within it match
+                day.style.display = visibleEventsInDay > 0 ? '' : 'none';
+            });
+
+
+            // Show/hide the overall "no results" message
+            noResults.style.display = totalVisibleEvents === 0 ? 'block' : 'none';
+        }
+
+        // Search input listener
+        searchInput.addEventListener('input', filterEvents);
+
+        // Filter button listeners
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                filterEvents();
+            });
+        });
+
+        // Initial filter on load
+        filterEvents();
+    });
+</script>
+
+<style>
+    .schedule-hero {
+        min-height: 50vh;
+        background: linear-gradient(rgba(24, 24, 24, 0.7), rgba(24, 24, 24, 0.7)), url('/images/schedule-hero.jpg') center/cover no-repeat;
+        margin-top: -70px; /* Offset navbar */
+        padding-top: 70px;
+    }
+     .schedule-filters .card {
+         background-color: var(--card-bg);
+         border-color: var(--bs-border-color);
+    }
+     .schedule-filters .form-control, .schedule-filters .form-select {
+        background-color: var(--input-bg);
+        color: var(--bs-body-color);
+        border-color: var(--bs-border-color);
+    }
+     .schedule-filters .form-control:focus, .schedule-filters .form-select:focus {
+         border-color: var(--bs-primary);
+         box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+     .schedule-filters .input-group-text {
+         background-color: var(--input-bg);
+         border-color: var(--bs-border-color);
+     }
+     .filter-buttons .btn-outline-primary {
+         color: var(--bs-primary);
+         border-color: var(--bs-primary);
+     }
+      .filter-buttons .btn-outline-primary:hover,
+      .filter-buttons .btn-outline-primary.active {
+         background-color: var(--bs-primary);
+         color: var(--bs-secondary);
+         border-color: var(--bs-primary);
+     }
+
+     .schedule-event-item {
+         transition: background-color 0.2s ease, border-color 0.2s ease;
+         border-color: var(--bs-border-color) !important; /* Override Bootstrap */
+     }
+     .schedule-event-item:hover {
+         background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+         border-color: rgba(var(--bs-primary-rgb), 0.3) !important;
+     }
+     .schedule-event-item h5 {
+         color: var(--bs-body-color);
+     }
+     .schedule-event-item .badge {
+         background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+         color: var(--bs-primary) !important;
+     }
+
+</style>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - NASCON</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 2rem;
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        .error-title {
+            font-size: 2rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .error-details {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            max-width: 800px;
+            width: 100%;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .error-details pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .back-home {
+            margin-top: 2rem;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-home:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <div class="error-code">500</div>
+        <h1 class="error-title"><%= typeof title !== 'undefined' ? title : 'Server Error' %></h1>
+        <p class="error-message">
+            <%= typeof message !== 'undefined' ? message : 'An unexpected error occurred. Please try again later.' %>
+        </p>
+        
+        <% if (process.env.NODE_ENV === 'development' && typeof error !== 'undefined' && error && Object.keys(error).length > 0) { %>
+            <div class="error-details">
+                <pre><%= JSON.stringify(error, null, 2) %></pre>
+            </div>
+        <% } %>
+
+        <div class="back-home">
+            <a href="/" class="btn-home">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html> 
