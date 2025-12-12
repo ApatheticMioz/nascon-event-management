@@ -1,7 +1,7 @@
 {
-  "name": "nascon_project",
+  "name": "nascon-event-management",
   "version": "1.0.0",
-  "description": "NASCON Web Application",
+  "description": "Comprehensive event management platform for the NASCON competition. Handles registrations, event scheduling, venues, sponsors, teams, payments, scoring, and role-based access control.",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

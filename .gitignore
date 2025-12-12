@@ -24,5 +24,42 @@ build/
 # Editor and system files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
+
+# Compiled binaries
+*.exe
+*.o
+*.out
+*.dll
+*.so
+*.dylib
+
+# Python (if any scripts)
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# Archives (should not be committed)
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar
+*.tgz
+
+# OS files
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Test coverage
+.nyc_output/
+
+# Optional: lock files (uncomment if desired)
+# package-lock.json
